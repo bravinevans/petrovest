@@ -1,9 +1,8 @@
-import { queryClient as q } from "@/app/providers";
 import { siteConfig } from "@/config/site";
 import { DISCOVER_MOVIES_VALID_QUERY_TYPES, DISCOVER_TVS_VALID_QUERY_TYPES } from "@/types/movie";
 import { parseAsSet } from "@/utils/parsers";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 const VALID_CONTENT_TYPES = ["movie", "tv"] as const;
 const DEFAULT_QUERY_TYPE = "discover";
@@ -44,11 +43,7 @@ const useDiscoverFilters = () => {
 
   const genresString = useMemo(() => {
     const selectedGenres = Array.from(genres).filter((genre) => genre !== "");
-
-    if (pool === "animation" || pool === "anime") {
-      selectedGenres.push(ANIMATION_GENRE_ID);
-    }
-
+    if (pool === "animation" || pool === "anime") selectedGenres.push(ANIMATION_GENRE_ID);
     return Array.from(new Set(selectedGenres)).join(",");
   }, [genres, pool]);
 
@@ -59,14 +54,8 @@ const useDiscoverFilters = () => {
       setPoolState(nextPool);
       setGenres(null);
       setQueryType(DEFAULT_QUERY_TYPE);
-
-      if (nextPool === "movies") {
-        setContent("movie");
-      }
-
-      if (nextPool === "tv") {
-        setContent("tv");
-      }
+      if (nextPool === "movies") setContent("movie");
+      if (nextPool === "tv") setContent("tv");
     },
     [setContent, setGenres, setPoolState, setQueryType],
   );
@@ -76,19 +65,6 @@ const useDiscoverFilters = () => {
     setQueryType(DEFAULT_QUERY_TYPE);
     setPoolState("all");
   }, [setGenres, setPoolState, setQueryType]);
-
-  const clearQueries = useCallback(() => {
-    const queryKeys = ["discover-movies", "discover-tv-shows"];
-    queryKeys.forEach((key) => {
-      if (!q.isFetching({ queryKey: [key] })) {
-        q.removeQueries({ queryKey: [key] });
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    clearQueries();
-  }, [content, queryType, genresString, originCountry, clearQueries]);
 
   return {
     types,

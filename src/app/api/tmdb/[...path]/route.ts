@@ -19,13 +19,7 @@ const ROUTES: { pattern: RegExp; ttl: number }[] = [
   { pattern: /^tv\/\d+\/season\/\d+$/, ttl: 6 * HOUR },
 ];
 
-const APPEND_TO_RESPONSE = new Set([
-  "images",
-  "videos",
-  "credits",
-  "recommendations",
-  "similar",
-]);
+const APPEND_TO_RESPONSE = new Set(["images", "videos", "credits", "recommendations", "similar"]);
 
 /** Rebuilds the query string from allowed params only, in a fixed order. */
 const sanitizeParams = (searchParams: URLSearchParams): URLSearchParams | null => {
@@ -49,6 +43,12 @@ const sanitizeParams = (searchParams: URLSearchParams): URLSearchParams | null =
   if (genres !== null) {
     if (!/^[\d,|]*$/.test(genres)) return null;
     if (genres) params.set("with_genres", genres);
+  }
+
+  const originCountry = searchParams.get("with_origin_country");
+  if (originCountry !== null) {
+    if (!/^[A-Z]{2}$/.test(originCountry)) return null;
+    params.set("with_origin_country", originCountry);
   }
 
   const append = searchParams.get("append_to_response");

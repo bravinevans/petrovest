@@ -23,6 +23,7 @@ const DiscoverFilters = () => {
     setGenres,
     resetFilters,
   } = useDiscoverFilters();
+  const supportsContentSpecificFilters = pool === "movies" || pool === "tv";
 
   return (
     <section aria-label="Discover filters" className="flex w-full flex-col items-center gap-5">
@@ -52,33 +53,37 @@ const DiscoverFilters = () => {
       </nav>
 
       <div className="flex w-full flex-wrap items-center justify-center gap-3">
-        <Select
-          disallowEmptySelection
-          selectionMode="single"
-          size="sm"
-          label="Type"
-          placeholder="Select type"
-          className="max-w-xs"
-          selectedKeys={[queryType]}
-          onChange={({ target }) => {
-            setQueryType(target.value as DiscoverMoviesFetchQueryType);
-            setGenres(null);
-          }}
-          value={queryType}
-        >
-          {types.map(({ name, key }) => (
-            <SelectItem key={key}>{name}</SelectItem>
-          ))}
-        </Select>
+        {supportsContentSpecificFilters && (
+          <>
+            <Select
+              disallowEmptySelection
+              selectionMode="single"
+              size="sm"
+              label="Type"
+              placeholder="Select type"
+              className="max-w-xs"
+              selectedKeys={[queryType]}
+              onChange={({ target }) => {
+                setQueryType(target.value as DiscoverMoviesFetchQueryType);
+                setGenres(null);
+              }}
+              value={queryType}
+            >
+              {types.map(({ name, key }) => (
+                <SelectItem key={key}>{name}</SelectItem>
+              ))}
+            </Select>
 
-        <GenresSelect
-          type={content}
-          selectedKeys={genres}
-          onGenreChange={(nextGenres) => {
-            setGenres(nextGenres);
-            setQueryType("discover");
-          }}
-        />
+            <GenresSelect
+              type={content}
+              selectedKeys={genres}
+              onGenreChange={(nextGenres) => {
+                setGenres(nextGenres);
+                setQueryType("discover");
+              }}
+            />
+          </>
+        )}
 
         <button
           type="button"
