@@ -21,16 +21,18 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
   const title = mutateMovieTitle(movie);
 
   const servers = [
-    { label: "Server 1 (VidLink)", src: `https://vidlink.pro{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 2 (VidSrc To)", src: `https://vidsrc.sh{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 3 (SuperEmbed)", src: `https://multiembed.eu{tmdbId}&tmdb=1&s=${season}&e=${episodeNumber}` },
-    { label: "Server 4 (VidSrc Me)", src: `https://vidsrc.me{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 5 (2Embed)", src: `https://2embed.cc{tmdbId}&s=${season}&e=${episodeNumber}` },
-    { label: "Server 6 (AutoEmbed)", src: `https://autoembed.cc{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 7 (NonoEmbed)", src: `https://nono.id{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 8 (SmashStream)", src: `https://smashystream.com{tmdbId}&season=${season}&episode=${episodeNumber}` },
-    { label: "Server 9 (Flicktstream)", src: `https://flicktstream.com{tmdbId}/${season}/${episodeNumber}` }
+    { label: "Server 1 (VidLink)", src: `https://vidlink.pro{tmdbId}` },
+    { label: "Server 2 (VidSrc To)", src: `https://vidsrc.sh{tmdbId}` },
+    { label: "Server 3 (SuperEmbed)", src: `https://multiembed.eu{tmdbId}&tmdb=1` },
+    { label: "Server 4 (VidSrc Me)", src: `https://vidsrc.me{tmdbId}` },
+    { label: "Server 5 (2Embed)", src: `https://2embed.cc{tmdbId}` },
+    { label: "Server 6 (AutoEmbed)", src: `https://autoembed.cc{tmdbId}` },
+    { label: "Server 7 (NonoEmbed)", src: `https://nono.id{tmdbId}` },
+    { label: "Server 8 (MovieAPI)", src: `https://mocah.org{tmdbId}` },
+    { label: "Server 9 (SmashStream)", src: `https://smashystream.com{tmdbId}` },
+    { label: "Server 10 (Flicktstream)", src: `https://flicktstream.com{tmdbId}` }
   ];
+
 
   usePlayerEvents({ saveHistory: true });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);
