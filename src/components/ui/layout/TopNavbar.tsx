@@ -2,9 +2,7 @@
 
 import BackButton from "@/components/ui/button/BackButton";
 import { siteConfig } from "@/config/site";
-import { cn } from "@/utils/helpers";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
-import { useWindowScroll } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FullscreenToggleButton from "../button/FullscreenToggleButton";
@@ -15,8 +13,6 @@ import BrandLogo from "../other/BrandLogo";
 
 const TopNavbar = () => {
   const pathName = usePathname();
-  const [{ y }] = useWindowScroll();
-  const opacity = Math.min((y / 1000) * 5, 1);
   const hrefs = siteConfig.navItems.map((item) => item.href);
   const show = hrefs.includes(pathName);
   const tv = pathName.includes("/tv/");
@@ -31,17 +27,9 @@ const TopNavbar = () => {
       isBlurred={false}
       position="sticky"
       maxWidth="full"
-      classNames={{ wrapper: "px-2 md:px-4" }}
-      className={cn("inset-0 h-min bg-transparent", {
-        "bg-background": show,
-      })}
+      classNames={{ wrapper: "px-4 md:px-8" }}
+      className="inset-0 h-min border-b border-zinc-800 bg-zinc-950"
     >
-      {!show && (
-        <div
-          className="border-background bg-background absolute inset-0 h-full w-full border-b"
-          style={{ opacity: opacity }}
-        />
-      )}
       <NavbarBrand>
         {show ? <BrandLogo /> : <BackButton href={tv ? "/?content=tv" : "/"} />}
       </NavbarBrand>
@@ -51,7 +39,7 @@ const TopNavbar = () => {
             <Link href="/search" className="w-full">
               <SearchInput
                 className="pointer-events-none"
-                placeholder="Search your favorite movies..."
+                placeholder="Search movies and shows..."
               />
             </Link>
           </NavbarItem>
