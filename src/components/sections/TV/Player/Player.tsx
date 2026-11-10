@@ -1,19 +1,12 @@
+"use client";
+
 import { siteConfig } from "@/config/site";
-import { cn } from "@/utils/helpers";
-import { getTvShowPlayers } from "@/utils/players";
-import { Card, Skeleton } from "@heroui/react";
-import { useDisclosure, useDocumentTitle, useIdle, useLocalStorage } from "@mantine/hooks";
-import dynamic from "next/dynamic";
-import { parseAsInteger, useQueryState } from "nuqs";
-import { memo, useMemo } from "react";
-import { Episode, TvShowDetails } from "tmdb-ts";
-import useBreakpoints from "@/hooks/useBreakpoints";
-import { ADS_WARNING_STORAGE_KEY, SpacingClasses } from "@/utils/constants";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
-const AdsWarning = dynamic(() => import("@/components/ui/overlay/AdsWarning"));
-const TvShowPlayerHeader = dynamic(() => import("./Header"));
-const TvShowPlayerSourceSelection = dynamic(() => import("./SourceSelection"));
-const TvShowPlayerEpisodeSelection = dynamic(() => import("./EpisodeSelection"));
+import { useDocumentTitle } from "@mantine/hooks";
+import Link from "next/link";
+import { useState } from "react";
+import { Episode, TvShowDetails } from "tmdb-ts";
+import EpisodeSelection from "./EpisodeSelection";
 
 export interface TvShowPlayerProps {
   tv: TvShowDetails;
@@ -27,82 +20,149 @@ export interface TvShowPlayerProps {
   startAt?: number;
 }
 
+const IFRAME_SANDBOX =
+  "allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation";
+
 const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
-  tv,
   id,
+  seriesName,
+  seasonName,
   episode,
   episodes,
-  startAt,
-  ...props
+  nextEpisodeNumber,
+  prevEpisodeNumber,
 }) => {
-  const [seen] = useLocalStorage<boolean>({
-    key: ADS_WARNING_STORAGE_KEY,
-    getInitialValueInEffect: false,
-  });
+  const [selectedServer, setSelectedServer] = useState(0);
+  const [episodeSelectionOpen, setEpisodeSelectionOpen] = useState(false);
+  const tmdbId = String(id);
+  const season = episode.season_number;
+  const episodeNumber = episode.episode_number;
 
-  const { mobile } = useBreakpoints();
-  const players = getTvShowPlayers(id, episode.season_number, episode.episode_number, startAt);
-  const idle = useIdle(3000);
-  const [sourceOpened, sourceHandlers] = useDisclosure(false);
-  const [episodeOpened, episodeHandlers] = useDisclosure(false);
-  const [selectedSource, setSelectedSource] = useQueryState<number>(
-    "src",
-    parseAsInteger.withDefault(0),
-  );
+  const servers = [
+    {
+      label: "Server 1",
+      src: `https://vidlink.pro${tmdbId}/${season}/${episodeNumber}`,
+    },
+    {
+      label: "Server 2",
+      src: `https://vidsrc.to${tmdbId}/${season}/${episodeNumber}`,
+    },
+    {
+      label: "Server 3",
+      src: `https://multiembed.eu${tmdbId}&tmdb=1&s=${season}&e=${episodeNumber}`,
+    },
+  ];
 
-  usePlayerEvents({
-    saveHistory: true,
-    metadata: { season: episode.season_number, episode: episode.episode_number },
-  });
-  useDocumentTitle(
-    `Play ${props.seriesName} - ${props.seasonName} - ${episode.name} | ${siteConfig.name}`,
-  );
+  usePlayerEvents({ saveHistory: true, metadata: { season, episode: episodeNumber } });
+  useDocumentTitle(`Play ${seriesName} - ${seasonName} - ${episode.name} | ${siteConfig.name}`);
 
-  const PLAYER = useMemo(() => players[selectedSource] || players[0], [players, selectedSource]);
+  const activeServer = servers[selectedServer];
+  const previousHref = prevEpisodeNumber
+    ? `/tv/${id}/${season}/${prevEpisodeNumber}/player`
+    : undefined;
+  const nextHref = nextEpisodeNumber
+    ? `/tv/${id}/${season}/${nextEpisodeNumber}/player`
+    : undefined;
 
   return (
-    <>
-      <AdsWarning />
+    <main className="min-h-dvh bg-zinc-950 px-4 py-6 text-zinc-100 md:px-8 md:py-10">
+      <div className="mx-auto w-full max-w-6xl">
+        <header className="mb-5 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-800 pb-4">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+              Petrovest Streaming
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
+              {seriesName}
+            </h1>
+            <p className="mt-1 text-sm text-zinc-400">
+              {seasonName} <span aria-hidden="true">/</span> Episode {episodeNumber}: {episode.name}
+            </p>
+          </div>
 
-      <div className={cn("relative", SpacingClasses.reset)}>
-        <TvShowPlayerHeader
-          id={id}
-          episode={episode}
-          hidden={idle && !mobile}
-          selectedSource={selectedSource}
-          onOpenSource={sourceHandlers.open}
-          onOpenEpisode={episodeHandlers.open}
-          {...props}
-        />
+          <nav aria-label="Episode navigation" className="flex flex-wrap gap-2">
+            {previousHref ? (
+              <Link
+                href={previousHref}
+                className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-300"
+              >
+                Previous episode
+              </Link>
+            ) : (
+              <span className="border border-zinc-800 px-4 py-2 text-sm text-zinc-600">
+                Previous episode
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => setEpisodeSelectionOpen(true)}
+              className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-300"
+            >
+              Episodes
+            </button>
+            {nextHref ? (
+              <Link
+                href={nextHref}
+                className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-300"
+              >
+                Next episode
+              </Link>
+            ) : (
+              <span className="border border-zinc-800 px-4 py-2 text-sm text-zinc-600">
+                Next episode
+              </span>
+            )}
+          </nav>
+        </header>
 
-        <Card shadow="md" radius="none" className="relative h-screen">
-          <Skeleton className="absolute h-full w-full" />
-          {seen && (
-            <iframe
-              allowFullScreen
-              key={PLAYER.title}
-              src={PLAYER.source}
-              className={cn("z-10 h-full", { "pointer-events-none": idle && !mobile })}
-            />
-          )}
-        </Card>
+        <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900">
+          <iframe
+            key={`${tmdbId}-${season}-${episodeNumber}-${selectedServer}`}
+            src={activeServer.src}
+            title={`${seriesName} — ${episode.name} — ${activeServer.label}`}
+            allowFullScreen
+            sandbox={IFRAME_SANDBOX}
+            referrerPolicy="no-referrer"
+            className="block size-full"
+          />
+        </div>
+
+        <nav
+          aria-label="Choose a streaming server"
+          className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4"
+        >
+          {servers.map((server, index) => {
+            const isActive = selectedServer === index;
+
+            return (
+              <button
+                key={server.label}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setSelectedServer(index)}
+                className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-300 ${
+                  isActive
+                    ? "border-zinc-100 bg-zinc-100 text-zinc-950"
+                    : "border-zinc-700 bg-zinc-950 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                }`}
+              >
+                {server.label}
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
-      <TvShowPlayerSourceSelection
-        opened={sourceOpened}
-        onClose={sourceHandlers.close}
-        players={players}
-        selectedSource={selectedSource}
-        setSelectedSource={setSelectedSource}
-      />
-      <TvShowPlayerEpisodeSelection
+      <EpisodeSelection
         id={id}
-        opened={episodeOpened}
-        onClose={episodeHandlers.close}
+        opened={episodeSelectionOpen}
+        onClose={() => setEpisodeSelectionOpen(false)}
         episodes={episodes}
       />
-    </>
+    </main>
   );
 };
 
-export default memo(TvShowPlayer);
+TvShowPlayer.displayName = "TvShowPlayer";
+
+export default TvShowPlayer;
