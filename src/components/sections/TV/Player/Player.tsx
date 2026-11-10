@@ -40,7 +40,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
   const servers = [
     { label: "Server 1 (VidLink)", src: `https://vidlink.pro{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 2 (VidSrc To)", src: `https://vidsrc.to{tmdbId}/${season}/${episodeNumber}` },
+    { label: "Server 2 (VidSrc To)", src: `https://vidsrc.sh{tmdbId}/${season}/${episodeNumber}` },
     { label: "Server 3 (SuperEmbed)", src: `https://multiembed.eu{tmdbId}&tmdb=1&s=${season}&e=${episodeNumber}` },
     { label: "Server 4 (VidSrc Me)", src: `https://vidsrc.me{tmdbId}/${season}/${episodeNumber}` },
     { label: "Server 5 (2Embed)", src: `https://2embed.cc{tmdbId}&s=${season}&e=${episodeNumber}` },
