@@ -22,7 +22,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
 
   const servers = [
     { label: "Server 1 (VidLink)", src: `https://vidlink.pro{tmdbId}` },
-    { label: "Server 2 (VidSrc To)", src: `https://vidsrc.to{tmdbId}` },
+    { label: "Server 2 (VidSrc To)", src: `https://vidsrc.sh{tmdbId}` },
     { label: "Server 3 (SuperEmbed)", src: `https://multiembed.eu{tmdbId}&tmdb=1` },
     { label: "Server 4 (VidSrc Me)", src: `https://vidsrc.me{tmdbId}` },
     { label: "Server 5 (2Embed)", src: `https://2embed.cc{tmdbId}` },
