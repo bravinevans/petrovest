@@ -1,78 +1,84 @@
-import { ADS_WARNING_STORAGE_KEY, SpacingClasses } from "@/utils/constants";
+"use client";
+
 import { siteConfig } from "@/config/site";
-import useBreakpoints from "@/hooks/useBreakpoints";
-import { cn } from "@/utils/helpers";
-import { mutateMovieTitle } from "@/utils/movies";
-import { getMoviePlayers } from "@/utils/players";
-import { Card, Skeleton } from "@heroui/react";
-import { useDisclosure, useDocumentTitle, useIdle, useLocalStorage } from "@mantine/hooks";
-import dynamic from "next/dynamic";
-import { parseAsInteger, useQueryState } from "nuqs";
-import { useMemo } from "react";
-import { MovieDetails } from "tmdb-ts/dist/types/movies";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
-const AdsWarning = dynamic(() => import("@/components/ui/overlay/AdsWarning"));
-const MoviePlayerHeader = dynamic(() => import("./Header"));
-const MoviePlayerSourceSelection = dynamic(() => import("./SourceSelection"));
+import { mutateMovieTitle } from "@/utils/movies";
+import { useDocumentTitle } from "@mantine/hooks";
+import { useState } from "react";
+import { MovieDetails } from "tmdb-ts/dist/types/movies";
 
 interface MoviePlayerProps {
   movie: MovieDetails;
   startAt?: number;
 }
 
-const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
-  const [seen] = useLocalStorage<boolean>({
-    key: ADS_WARNING_STORAGE_KEY,
-    getInitialValueInEffect: false,
-  });
+const IFRAME_SANDBOX =
+  "allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation";
 
-  const players = getMoviePlayers(movie.id, startAt);
+const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
+  const [selectedServer, setSelectedServer] = useState(0);
+  const tmdbId = String(movie.id);
   const title = mutateMovieTitle(movie);
-  const idle = useIdle(3000);
-  const { mobile } = useBreakpoints();
-  const [opened, handlers] = useDisclosure(false);
-  const [selectedSource, setSelectedSource] = useQueryState<number>(
-    "src",
-    parseAsInteger.withDefault(0),
-  );
+
+  const servers = [
+    { label: "Server 1", src: `https://vidlink.pro${tmdbId}` },
+    { label: "Server 2", src: `https://vidsrc.to${tmdbId}` },
+    { label: "Server 3", src: `https://multiembed.eu${tmdbId}&tmdb=1` },
+  ];
 
   usePlayerEvents({ saveHistory: true });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);
 
-  const PLAYER = useMemo(() => players[selectedSource] || players[0], [players, selectedSource]);
+  const activeServer = servers[selectedServer];
 
   return (
-    <>
-      <AdsWarning />
+    <main className="min-h-dvh bg-zinc-950 px-4 py-6 text-zinc-100 md:px-8 md:py-10">
+      <div className="mx-auto w-full max-w-6xl">
+        <header className="mb-5 border-b border-zinc-800 pb-4">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+            Petrovest Streaming
+          </p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
+        </header>
 
-      <div className={cn("relative", SpacingClasses.reset)}>
-        <MoviePlayerHeader
-          id={movie.id}
-          movieName={title}
-          onOpenSource={handlers.open}
-          hidden={idle && !mobile}
-        />
-        <Card shadow="md" radius="none" className="relative h-screen">
-          <Skeleton className="absolute h-full w-full" />
-          {seen && (
-            <iframe
-              allowFullScreen
-              key={PLAYER.title}
-              src={PLAYER.source}
-              className={cn("z-10 h-full", { "pointer-events-none": idle && !mobile })}
-            />
-          )}
-        </Card>
+        <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900">
+          <iframe
+            key={`${tmdbId}-${selectedServer}`}
+            src={activeServer.src}
+            title={`${title} — ${activeServer.label}`}
+            allowFullScreen
+            sandbox={IFRAME_SANDBOX}
+            referrerPolicy="no-referrer"
+            className="block size-full"
+          />
+        </div>
+
+        <nav
+          aria-label="Choose a streaming server"
+          className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4"
+        >
+          {servers.map((server, index) => {
+            const isActive = selectedServer === index;
+
+            return (
+              <button
+                key={server.label}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setSelectedServer(index)}
+                className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-300 ${
+                  isActive
+                    ? "border-zinc-100 bg-zinc-100 text-zinc-950"
+                    : "border-zinc-700 bg-zinc-950 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                }`}
+              >
+                {server.label}
+              </button>
+            );
+          })}
+        </nav>
       </div>
-
-      <MoviePlayerSourceSelection
-        opened={opened}
-        onClose={handlers.close}
-        players={players}
-        selectedSource={selectedSource}
-        setSelectedSource={setSelectedSource}
-      />
-    </>
+    </main>
   );
 };
 
