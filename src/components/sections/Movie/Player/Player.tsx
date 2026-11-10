@@ -1,7 +1,6 @@
 "use client";
 
 import { siteConfig } from "@/config/site";
-import { usePlayerEvents } from "@/hooks/usePlayerEvents";
 import { mutateMovieTitle } from "@/utils/movies";
 import { useDocumentTitle } from "@mantine/hooks";
 import { useState } from "react";
@@ -33,10 +32,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
     { label: "Server 10 (Flicktstream)", src: `https://flicktstream.com{tmdbId}` }
   ];
 
-
-  usePlayerEvents({ saveHistory: true });
   useDocumentTitle(`Play ${title} | ${siteConfig.name}`);
-
   const activeServer = servers[selectedServer];
 
   return (
@@ -61,20 +57,16 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
           />
         </div>
 
-        <nav
-          aria-label="Choose a streaming server"
-          className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4"
-        >
+        <nav aria-label="Choose a streaming server" className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4">
           {servers.map((server, index) => {
             const isActive = selectedServer === index;
-
             return (
               <button
                 key={server.label}
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => setSelectedServer(index)}
-                className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-300 ${
+                className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors ${
                   isActive
                     ? "border-zinc-100 bg-zinc-100 text-zinc-950"
                     : "border-zinc-700 bg-zinc-950 text-zinc-300 hover:bg-zinc-800 hover:text-white"
@@ -91,5 +83,4 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
 };
 
 MoviePlayer.displayName = "MoviePlayer";
-
 export default MoviePlayer;
