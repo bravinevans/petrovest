@@ -40,6 +40,7 @@ export type QueryList<T extends Movie | TV> = {
 
 export type SiteConfigType = {
   name: string;
+  url: string;
   description: string;
   favicon: string;
   navItems: {

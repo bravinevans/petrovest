@@ -14,8 +14,10 @@ import {
 import { TbFolder, TbFolderFilled } from "react-icons/tb";
 
 export const siteConfig: SiteConfigType = {
-  name: "Cinextma",
-  description: "Your only choice for a free movies and tv shows streaming website.",
+  name: "Petrovest Streaming",
+  url: "https://petrovest.top",
+  description:
+    "A premium, high-performance streaming interface for discovering movies, shows, animations, and anime.",
   favicon: "/favicon.ico",
   navItems: [
     {
@@ -128,7 +130,7 @@ export const siteConfig: SiteConfigType = {
     ],
   },
   socials: {
-    github: "https://github.com/wisnuwirayuda15/cinextma",
+    github: "https://github.com/bravinevans/petrovest",
   },
 };
 

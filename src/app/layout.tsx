@@ -17,6 +17,7 @@ import { Suspense } from "react";
 const Disclaimer = dynamic(() => import("@/components/ui/overlay/Disclaimer"));
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: siteConfig.name,
   applicationName: siteConfig.name,
   description: siteConfig.description,
@@ -35,6 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
+    url: siteConfig.url,
     title: {
       default: siteConfig.name,
       template: siteConfig.name,
