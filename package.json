@@ -1,8 +1,15 @@
 {
-  "name": "cinextma",
+  "name": "petrovest-streaming",
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "description": "A premium, high-performance streaming interface for movies, shows, animations, and anime on petrovest.top.",
+  "author": "Petrovest Streaming",
+  "homepage": "https://petrovest.top",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bravinevans/petrovest.git"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
