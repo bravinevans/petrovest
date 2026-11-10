@@ -1,122 +1,47 @@
 "use client";
 
-import IconButton from "./IconButton";
+import React from "react";
 import VaulDrawer from "@/components/ui/overlay/VaulDrawer";
-import {
-  WhatsappShareButton,
-  WhatsappIcon,
-  TwitterShareButton,
-  XIcon,
-  LinkedinShareButton,
-  LinkedinIcon,
-  FacebookIcon,
-  FacebookShareButton,
-  LineShareButton,
-  LineIcon,
-  RedditIcon,
-  RedditShareButton,
-  EmailIcon,
-  EmailShareButton,
-  TelegramIcon,
-  TelegramShareButton,
-} from "react-share";
 import { Divider } from "@heroui/react";
-import CopyButton from "./CopyButton";
-import { ContentType } from "@/types";
-import { Share } from "@/utils/icons";
 import { useDisclosure } from "@mantine/hooks";
 
-interface ShareButtonProps {
-  title: string;
-  id: string | number;
-  type?: ContentType;
-}
-
-const HASTAGS = ["petrovest", "free", "movies", "streaming"];
-
-const SHARE_BUTTONS = [
-  {
-    label: "Facebook",
-    Icon: FacebookIcon,
-    Component: FacebookShareButton,
-  },
-  {
-    label: "WhatsApp",
-    Icon: WhatsappIcon,
-    Component: WhatsappShareButton,
-  },
-  {
-    label: "X (Twitter)",
-    Icon: XIcon,
-    Component: TwitterShareButton,
-  },
-  {
-    label: "LinkedIn",
-    Icon: LinkedinIcon,
-    Component: LinkedinShareButton,
-  },
-  {
-    label: "Line",
-    Icon: LineIcon,
-    Component: LineShareButton,
-  },
-  {
-    label: "Telegram",
-    Icon: TelegramIcon,
-    Component: TelegramShareButton,
-  },
-  {
-    label: "Reddit",
-    Icon: RedditIcon,
-    Component: RedditShareButton,
-  },
-  {
-    label: "Email",
-    Icon: EmailIcon,
-    Component: EmailShareButton,
-  },
-];
-
-const ShareButton: React.FC<ShareButtonProps> = ({ title, id, type = "movie" }) => {
-  const url = `https://${location.hostname}/${type}/${id}`;
-  const description = `Check out and stream ${title} on Petrovest for FREE!!`;
-
+export default function Disclaimer() {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <>
-      <IconButton icon={<Share size={20} />} variant="ghost" tooltip="Share" onPress={open} />
-      <VaulDrawer open={opened} onClose={close} backdrop="blur" title="Share via">
-        <div className="space-y-8 px-6">
-          <div className="grid grid-cols-4 gap-x-5 gap-y-3 md:gap-x-10 md:gap-y-5">
-            {SHARE_BUTTONS.map(({ Component, Icon, label }) => (
-              <Component
-                key={label}
-                title={description}
-                hashtags={HASTAGS}
-                url={url}
-                subject={description}
-                onClick={close}
-                className="flex flex-col items-center justify-center gap-2"
-              >
-                <Icon className="rounded-md" size={45} />
-                <span className="text-xs">{label}</span>
-              </Component>
-            ))}
-          </div>
+      <button
+        type="button"
+        onClick={open}
+        className="text-xs font-mono text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-wider"
+      >
+        Disclaimer
+      </button>
+
+      <VaulDrawer open={opened} onClose={close} backdrop="blur" title="Disclaimer">
+        <div className="space-y-4 px-6 text-sm font-mono text-zinc-400 leading-relaxed">
+          <p>
+            Petrovest Streaming operates strictly as a 3rd-party media directory indexing public, 
+            keyless embed networks across the web layer. We do not host, store, stream, or modify 
+            any video files directly on our platform infrastructure.
+          </p>
+          <p>
+            All content queries pass through dynamic routing structures to isolated endpoints. 
+            For compliance, intellectual property matters, or content inquiries, please contact 
+            the respective media hosting and embed infrastructure networks directly.
+          </p>
         </div>
-        <Divider className="my-4" />
-        <div className="space-y-4 px-6">
-          <CopyButton
-            text={url}
-            label="Copy Link"
-            copiedLabel="Link copied to clipboard!"
-            onCopied={close}
-          />
+        <Divider className="my-4 border-zinc-800" />
+        <div className="px-6 pb-4 flex justify-end">
+          <button
+            type="button"
+            onClick={close}
+            className="h-10 border border-zinc-700 bg-zinc-950 px-4 text-xs font-medium text-zinc-300 hover:bg-zinc-900 transition-colors"
+          >
+            Close Window
+          </button>
         </div>
       </VaulDrawer>
     </>
   );
-};
-
-export default ShareButton;
+}
