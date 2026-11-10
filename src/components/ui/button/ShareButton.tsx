@@ -1,155 +1,101 @@
 "use client";
 
-import { memo, useCallback, useMemo, useState } from "react";
-import { useDisclosure, useInterval, useLocalStorage } from "@mantine/hooks";
+import React from "react";
+import VaulDrawer from "@/components/ui/overlay/VaulDrawer";
+import { Divider } from "@heroui/react";
+import { useDisclosure } from "@mantine/hooks";
+import { Share } from "@/utils/icons";
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  ScrollShadow,
-} from "@heroui/react";
-import { DISCLAIMER_STORAGE_KEY, IS_BROWSER } from "@/utils/constants";
-import { cn } from "@/utils/helpers";
+  WhatsappShareButton,
+  WhatsappIcon,
+  TwitterShareButton,
+  XIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+  FacebookIcon,
+  FacebookShareButton,
+  LineShareButton,
+  LineIcon,
+  RedditIcon,
+  RedditShareButton,
+  EmailIcon,
+  EmailShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+} from "react-share";
 
-const COUNTDOWN_DURATION = 10;
-const MODAL_SIZE = "3xl";
-const DISCLAIMER_CONTENT = {
-  title: "Disclaimer",
-  paragraphs: [
-    {
-      id: "welcome",
-      content:
-        "Welcome to Petrovest - a free and open-source movie streaming website. Please read this disclaimer carefully before using this website.",
-    },
-    {
-      id: "purpose",
-      content: "Petrovest is developed solely for",
-      emphasis: "educational and learning purposes.",
-      continuation:
-        "This website is an open-source project intended to demonstrate web development skills and is not meant to promote or encourage digital piracy in any form.",
-    },
-    {
-      id: "content-source",
-      content:
-        "All content displayed on Petrovest (including but not limited to movies, images, posters, and related information) is sourced from",
-      emphasis: "third-party providers through APIs or embedding.",
-      continuation:
-        "I do not host, store, or distribute any media files on my servers. The website merely aggregates content that is already available on the internet.",
-    },
-    {
-      id: "responsibility",
-      content:
-        "By using Petrovest, you acknowledge that I bears no responsibility for user actions, content accuracy, or any direct or indirect damages arising from the use of this website. Users are solely responsible for their actions while using this service. I respect intellectual property rights and will respond to legitimate requests from copyright holders for content removal.",
-    },
-    {
-      id: "usage",
-      content:
-        "This website should only be used for learning purposes. Any illegal activities, including but not limited to unauthorized downloading, redistribution of content, or commercial use, are strictly prohibited. By using Petrovest, you agree to these terms and acknowledge that",
-      emphasis: "you use the service at your own risk.",
-    },
-  ],
-};
-
-interface DisclaimerParagraphProps {
-  content: string;
-  emphasis?: string;
-  continuation?: string;
+export interface ShareButtonProps {
+  title: string;
+  id: string | number;
+  type?: string;
 }
 
-const DisclaimerParagraph: React.FC<DisclaimerParagraphProps> = memo(
-  ({ content, emphasis, continuation }) => (
-    <p>
-      {content}
-      {emphasis && (
-        <>
-          {" "}
-          <strong>{emphasis}</strong>
-        </>
-      )}
-      {continuation && ` ${continuation}`}
-    </p>
-  ),
-);
+const HASTAGS = ["petrovest", "free", "movies", "streaming"];
 
-DisclaimerParagraph.displayName = "DisclaimerParagraph";
+const SHARE_BUTTONS = [
+  { label: "Facebook", Icon: FacebookIcon, Component: FacebookShareButton },
+  { label: "WhatsApp", Icon: WhatsappIcon, Component: WhatsappShareButton },
+  { label: "X (Twitter)", Icon: XIcon, Component: TwitterShareButton },
+  { label: "LinkedIn", Icon: LinkedinIcon, Component: LinkedinShareButton },
+  { label: "Line", Icon: LineIcon, Component: LineShareButton },
+  { label: "Telegram", Icon: TelegramIcon, Component: TelegramShareButton },
+  { label: "Reddit", Icon: RedditIcon, Component: RedditShareButton },
+  { label: "Email", Icon: EmailIcon, Component: EmailShareButton },
+];
 
-const Disclaimer: React.FC = () => {
-  const [hasAgreed, setHasAgreed] = useLocalStorage<boolean>({
-    key: DISCLAIMER_STORAGE_KEY,
-    defaultValue: false,
-    getInitialValueInEffect: false,
-  });
-
-  const [secondsRemaining, setSecondsRemaining] = useState(COUNTDOWN_DURATION);
-
-  const shouldShowModal = useMemo(() => !hasAgreed && IS_BROWSER, [hasAgreed]);
-
-  const [isOpen, { close }] = useDisclosure(shouldShowModal);
-
-  useInterval(() => setSecondsRemaining((prev) => Math.max(0, prev - 1)), 1000, {
-    autoInvoke: shouldShowModal && secondsRemaining > 0,
-  });
-
-  const isButtonDisabled = secondsRemaining > 0;
-  const buttonText = useMemo(
-    () => `Agree${isButtonDisabled ? ` (${secondsRemaining})` : ""}`,
-    [isButtonDisabled, secondsRemaining],
-  );
-
-  const handleAgree = useCallback(() => {
-    close();
-    setHasAgreed(true);
-  }, [close, setHasAgreed]);
-
-  if (hasAgreed || !IS_BROWSER) {
-    return null;
-  }
+export const ShareButton: React.FC<ShareButtonProps> = ({ title, id, type = "movie" }) => {
+  const [opened, { open, close }] = useDisclosure(false);
+  
+  // Safely check for execution inside a browser window context
+  const shareUrl = typeof window !== "undefined" 
+    ? `https://${window.location.hostname}/${type}/${id}`
+    : `https://petrovest.co.ke{type}/${id}`;
+    
+  const description = `Check out and stream ${title} on Petrovest for FREE!!`;
 
   return (
-    <Modal
-      hideCloseButton
-      isOpen={isOpen}
-      placement="center"
-      backdrop="blur"
-      size={MODAL_SIZE}
-      isDismissable={false}
-      scrollBehavior="inside"
-    >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1 text-center text-3xl uppercase">
-          {DISCLAIMER_CONTENT.title}
-        </ModalHeader>
+    <>
+      <button
+        type="button"
+        onClick={open}
+        className="flex h-10 items-center justify-center gap-2 border border-zinc-800 bg-zinc-950 px-4 text-xs font-mono uppercase tracking-wider text-zinc-300 hover:bg-zinc-900 transition-colors"
+      >
+        <Share size={16} />
+        <span>Share</span>
+      </button>
 
-        <ModalBody>
-          <ScrollShadow hideScrollBar className="space-y-4">
-            {DISCLAIMER_CONTENT.paragraphs.map((paragraph) => (
-              <DisclaimerParagraph
-                key={paragraph.id}
-                content={paragraph.content}
-                emphasis={paragraph.emphasis}
-                continuation={paragraph.continuation}
-              />
+      <VaulDrawer open={opened} onClose={close} backdrop="blur" title="Share via">
+        <div className="space-y-8 px-6 pt-4">
+          <div className="grid grid-cols-4 gap-x-5 gap-y-3 md:gap-x-10 md:gap-y-5">
+            {SHARE_BUTTONS.map(({ Component, Icon, label }) => (
+              <Component
+                key={label}
+                title={description}
+                hashtags={HASTAGS}
+                url={shareUrl}
+                subject={description}
+                onClick={close}
+                className="flex flex-col items-center justify-center gap-2 text-zinc-300 hover:text-zinc-100"
+              >
+                <Icon className="rounded-none" size={40} />
+                <span className="text-[10px] font-mono tracking-tight">{label}</span>
+              </Component>
             ))}
-          </ScrollShadow>
-        </ModalBody>
-
-        <ModalFooter className="justify-center">
-          <Button
-            className={cn(isButtonDisabled && "pointer-events-auto cursor-not-allowed")}
-            isDisabled={isButtonDisabled}
-            color={isButtonDisabled ? "danger" : "primary"}
-            variant="shadow"
-            onPress={handleAgree}
+          </div>
+        </div>
+        <Divider className="my-4 border-zinc-800" />
+        <div className="px-6 pb-6 flex justify-end">
+          <button
+            type="button"
+            onClick={close}
+            className="h-10 border border-zinc-700 bg-zinc-950 px-4 text-xs font-medium text-zinc-300 hover:bg-zinc-900 transition-colors"
           >
-            {buttonText}
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+            Close
+          </button>
+        </div>
+      </VaulDrawer>
+    </>
   );
 };
 
-export default Disclaimer;
+export default ShareButton;
