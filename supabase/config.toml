@@ -188,7 +188,7 @@ port = "env(SUPABASE_AUTH_SMTP_PORT)"
 user = "env(SUPABASE_AUTH_SMTP_EMAIL)"
 pass = "env(SUPABASE_AUTH_SMTP_PASSWORD)"
 admin_email = "env(SUPABASE_AUTH_SMTP_EMAIL)"
-sender_name = "Cinextma"
+sender_name = "Petrovest Streaming"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
