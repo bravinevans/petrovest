@@ -1,9 +1,9 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { siteConfig } from "@/config/site";
 import { mutateMovieTitle } from "@/utils/movies";
 import { useDocumentTitle } from "@mantine/hooks";
-import { useState } from "react";
 import { MovieDetails } from "tmdb-ts/dist/types/movies";
 
 interface MoviePlayerProps {
@@ -16,8 +16,14 @@ const IFRAME_SANDBOX =
 
 const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
   const [selectedServer, setSelectedServer] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
   const tmdbId = String(movie.id);
   const title = mutateMovieTitle(movie);
+
+  // Safely trigger component activation strictly on client browser mounting
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const servers = [
     { label: "Server 1 (VidLink)", src: `https://vidlink.pro{tmdbId}` },
@@ -45,16 +51,22 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie }) => {
           <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
         </header>
 
-        <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900">
-          <iframe
-            key={`${tmdbId}-${selectedServer}`}
-            src={activeServer.src}
-            title={`${title} — ${activeServer.label}`}
-            allowFullScreen
-            sandbox={IFRAME_SANDBOX}
-            referrerPolicy="no-referrer"
-            className="block size-full"
-          />
+        <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900 flex items-center justify-center">
+          {isMounted ? (
+            <iframe
+              key={`${tmdbId}-${selectedServer}`}
+              src={activeServer.src}
+              title={`${title} — ${activeServer.label}`}
+              allowFullScreen
+              sandbox={IFRAME_SANDBOX}
+              referrerPolicy="no-referrer"
+              className="block size-full border-none"
+            />
+          ) : (
+            <div className="text-sm font-mono text-zinc-500 uppercase tracking-widest animate-pulse">
+              Initializing Secure Stream Pipeline...
+            </div>
+          )}
         </div>
 
         <nav aria-label="Choose a streaming server" className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4">
