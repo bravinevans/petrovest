@@ -15,7 +15,7 @@ import { TbFolder, TbFolderFilled } from "react-icons/tb";
 
 export const siteConfig: SiteConfigType = {
   name: "Petrovest Streaming",
-  url: "https://petrovest.top",
+  url: "https://petrovest.co.ke",
   description:
     "A premium, high-performance streaming interface for discovering movies, shows, animations, and anime.",
   favicon: "/favicon.ico",
