@@ -1,45 +1,19 @@
 # Petrovest Streaming
 
-**Petrovest Streaming** is a discovery and viewing platform for movies and TV shows at [petrovest.top](https://petrovest.top). Explore titles, find something to watch, and use the available streaming sources from the player.
+Petrovest Streaming is a streaming platform for movies and TV shows available on [petrovest.co.ke](https://petrovest.co.ke). Discover titles, explore trending categories, and watch through the available sources in the player.
 
-## User reference
+## Features
 
-### Find something to watch
+- Browse home and discover pages for popular, trending, and upcoming titles.
+- Search by movie or show title.
+- Review movie and TV details before playback.
+- Access account features like your library and watch history when signed in.
+- Use the built-in player with multiple available sources when they are available.
 
-- **Home** — browse featured and trending titles.
-- **Discover** — explore movie and TV categories, including popular, trending, upcoming, and highly rated selections.
-- **Search** — look up movies and shows by title.
-- **Movie and show pages** — review available title details before opening playback.
+## Visit the site
 
-### Watch movies and TV
+Open [petrovest.co.ke](https://petrovest.co.ke) to browse the app.
 
-- **Movies** open in the movie player, which offers a choice of available streaming sources.
-- **TV shows** provide season and episode selection, episode navigation, and available streaming sources in the player.
-- If a source does not load, use the player’s server controls to try another source.
+## Contributing
 
-Streaming sources are provided by third parties. Availability and playback behavior may vary by source; Petrovest does not control third-party services.
-
-### Personal features
-
-Sign in to use account features such as your saved library and viewing history. The available options depend on your account and current platform configuration.
-
-## Platform layout
-
-The experience is organized around these user-facing areas:
-
-| Area | Purpose |
-| --- | --- |
-| Home and Discover | Browse movie and TV selections |
-| Search | Find a specific title |
-| Movie details and player | Review and play a movie using an available source |
-| TV details and player | Choose a season and episode, navigate episodes, and select a source |
-| Library and account | Access personal saved content and account features |
-| About | Read platform information and help content |
-
-## Responsible use
-
-Petrovest is a discovery interface and does not host or store the media delivered by third-party sources. Users are responsible for complying with applicable laws and third-party service terms. Prefer authorized services when available.
-
-## Visit
-
-Open [https://petrovest.top](https://petrovest.top) to use Petrovest Streaming.
+Contributions are welcome. Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for the project contribution guidelines.

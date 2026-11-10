@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "A premium, high-performance streaming interface for movies, shows, animations, and anime on petrovest.top.",
+  "description": "A premium, high-performance streaming interface for movies, shows, animations, and anime on petrovest.co.ke.",
   "author": "Petrovest Streaming",
-  "homepage": "https://petrovest.top",
+  "homepage": "https://petrovest.co.ke",
   "repository": {
     "type": "git",
     "url": "https://github.com/bravinevans/petrovest.git"
