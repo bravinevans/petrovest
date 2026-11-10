@@ -1,67 +1,83 @@
-"use client";
+# Petrovest - Free Movies & TV Shows Streaming
 
-import useBreakpoints from "@/hooks/useBreakpoints";
-import { Accordion, AccordionItem, Link } from "@heroui/react";
+<div style="text-align:center">
 
-const FAQS = [
-  {
-    title: "🤔 What is Cinextma?",
-    description:
-      "Just like every other website, Cinextma is also a streaming site that helps to easily access all the TV shows and movies we wanted, without spending hours searching for them.",
-  },
-  {
-    title: "❓ So what do we actually do?",
-    description:
-      "Well, let me tell you what we don’t do: we definitely don’t illegally host our files. We do not store any copyright-protected content on our website. Any linked content is stored only in third-party websites. This is a promotional website only. All files placed here are for introducing purpose. We highly ENCOURAGE users to BUY the CDs or DVDs of the movie or the music they like.",
-  },
-  {
-    title: "🚫 I cannot watch video because of ads",
-    description: (
-      <p>
-        We are very sorry that we can't help you with that. We have no control in the ads being
-        served. Don't download anything in the popups. If you don't want to be annoyed. We highly
-        recommend subscribing to a legal streaming service that you can afford (or use an adblocker
-        like{" "}
-        <Link href="https://ublockorigin.com/" target="_blank" className="font-bold">
-          uBlock Origin
-        </Link>{" "}
-        or{" "}
-        <Link href="https://adblockplus.org/" target="_blank" className="font-bold">
-          Adblock Plus
-        </Link>
-        ).
-      </p>
-    ),
-  },
-  {
-    title: "🐌 Streaming speed is slow or all videos do not play",
-    description:
-      "When you go on the page with the episode, in 99% of the cases there is a video player. What you have to do is click the Play button, of course. If it does not work (Don’t be judgmental! Everybody makes mistakes!), just click on the Servers you see on the top right of your device. You will get a list of servers [Vidlink, VidSrc etc.] Try choosing different server, it will definitely solve the problem.",
-  },
-  {
-    title: "😁 I want to download video",
-    description:
-      "Since we don't store any files, so we don't have any download feature here. All files found on this site have been collected from various sources across the web and are believed to be in the public domain.",
-  },
-  {
-    title: "😟 Is it safe to stream in this website?",
-    description:
-      "This website is undoubtedly safer to stream, however downloading, uploading is illegal. You will not get into any trouble while using our website. It's highly not recommended to download the files and share them to the public, It might get you in trouble.",
-  },
-];
+![Petrovest Mockup Screenshot](https://raw.githubusercontent.com/wisnuwirayuda15/cinextma/refs/heads/master/src/public/img/mockup.png)
 
-const FAQ = () => {
-  const { mobile } = useBreakpoints();
+</div>
 
-  return (
-    <Accordion variant="splitted" isCompact={mobile}>
-      {FAQS.map(({ title, description }) => (
-        <AccordionItem key={title} aria-label={title} title={title}>
-          {description}
-        </AccordionItem>
-      ))}
-    </Accordion>
-  );
-};
+🍿Petrovest🍿 is an open-source, free movies and TV shows streaming platform built with the latest web technologies. It offers a seamless and enjoyable viewing experience, allowing users to discover, search, and enjoy a vast library of content.
 
-export default FAQ;
+## Key Features
+
+- **💸 Free and Open-Source**: Petrovest is completely free to use and the source code is available for anyone to explore, contribute, and build upon.
+- **🌗 Light and Dark Mode**: The application supports both light and dark modes, providing a customizable viewing experience that adapts to user preferences.
+- **🧭 Discover Content**: Users can browse through various content categories, such as popular, trending, and upcoming, to discover new movies and TV shows to enjoy.
+- **🔎 Powerful Search**: The search functionality allows users to easily find specific titles, actors, or genres, making it a breeze to locate the content they're interested in.
+- **📂 Personal Library**: Users can build their own personalized library of favorite movies and TV shows, making it easy to keep track of what they've watched and want to watch.
+- **💻📱 Responsive UI**: The platform's user interface is designed to be responsive and accessible across various devices, ensuring a consistent and enjoyable experience on desktops, tablets, and mobile devices.
+- **📲 Progressive Web App**: The platform is designed to be installable on devices and provide native-like features, ensuring a seamless and engaging experience for users.
+- **🙍‍♂️ User Account**: Users can create an account to access personalized features, such as a watchlist and history.
+
+## Other Features
+
+- **📺 TV Shows** (Finished)
+- **🙍‍♂️ User Account** (Finished)
+- **🏆 Achievements System** (Planned)
+- **⚙️ Personal Settings** (Work in Progress)
+- **🌐 Social Features** (Planned)
+
+## Technologies Used
+
+Petrovest is built using the following technologies:
+
+- **Next.js 15 App Router**: The application leverages the latest version of Next.js, which includes the new App Router, providing a more intuitive and powerful development experience.
+- **Tailwind CSS 4**: The user interface is styled using the Tailwind CSS utility-first CSS framework, ensuring a visually appealing and responsive design.
+- **Next UI**: The project utilizes the Next UI library, which provides a set of high-quality, customizable React components that integrate seamlessly with Tailwind CSS.
+- **TypeScript**: The codebase is written in TypeScript, ensuring better type safety, developer productivity, and maintainability.
+- **TanStack Query**: The application uses the TanStack Query library for efficient data fetching and caching, providing a smooth and responsive user experience.
+- **The Movie Database (TMDB) API**: Petrovest integrates with the TMDB API to retrieve movie and TV show data, ensuring access to a vast and up-to-date content library.
+- **Supabase**: The project uses Supabase for user authentication and database management.
+
+## Getting Started
+
+To run Petrovest locally, follow these steps:
+
+1. Clone the repository:
+
+```
+git clone https://github.com/bravinevans/petrovest.git
+```
+
+2. Install the dependencies:
+
+```
+cd petrovest
+bun install
+```
+
+3. Start the development server:
+
+```
+bun dev
+```
+
+4. Open your browser and visit `http://localhost:3000` to access the Petrovest application.
+
+## Contributing
+
+Contributions to Petrovest are welcome! If you'd like to contribute, please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for guidelines and instructions.
+
+## License
+
+Petrovest is licensed under the [MIT License](LICENSE). This means you are free to use, modify, and distribute the application, as long as you include the original copyright and license notice in your work.
+
+## Star History
+
+<a href="https://www.star-history.com/#wisnuwirayuda15/cinextma&Timeline">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=wisnuwirayuda15/cinextma&type=Timeline&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=wisnuwirayuda15/cinextma&type=Timeline" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=wisnuwirayuda15/cinextma&type=Timeline" />
+ </picture>
+</a>
