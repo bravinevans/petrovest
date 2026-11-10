@@ -16,15 +16,16 @@ import TvShowPosterCard from "../TV/Cards/Poster";
 
 const TvShowDiscoverList = () => {
   const { ref, inViewport } = useInViewport();
-  const { genresString, queryType } = useDiscoverFilters();
+  const { genresString, queryType, originCountry } = useDiscoverFilters();
   const { data, isPending, status, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["discover-tv-shows", queryType, genresString],
+      queryKey: ["discover-tv-shows", queryType, genresString, originCountry],
       queryFn: ({ pageParam }) =>
         useFetchDiscoverTvShows({
           page: pageParam,
           type: queryType as DiscoverTvShowsFetchQueryType,
           genres: genresString,
+          originCountry,
         }),
       initialPageParam: 1,
       getNextPageParam: (lastPage) =>
@@ -32,7 +33,7 @@ const TvShowDiscoverList = () => {
     });
 
   useEffect(() => {
-    if (inViewport) {
+    if (inViewport && !isPending) {
       fetchNextPage();
     }
   }, [inViewport]);
@@ -54,11 +55,9 @@ const TvShowDiscoverList = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-10">
       <div className="movie-grid">
-        {data.pages.map((page) => {
-          return page.results.map((tv) => {
-            return <TvShowPosterCard key={tv.id} tv={tv} variant="bordered" />;
-          });
-        })}
+        {data.pages.map((page) =>
+          page.results.map((tv) => <TvShowPosterCard key={tv.id} tv={tv} variant="bordered" />),
+        )}
       </div>
       <div ref={ref} className="flex h-24 items-center justify-center">
         {isFetchingNextPage && (

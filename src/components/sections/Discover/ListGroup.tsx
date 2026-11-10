@@ -6,13 +6,15 @@ import DiscoverFilters from "./Filters";
 import TvShowDiscoverList from "./TvShowList";
 
 const DiscoverListGroup = () => {
-  const { content } = useDiscoverFilters();
+  const { pool } = useDiscoverFilters();
+  const showMovies = pool === "all" || pool === "movies" || pool === "animation" || pool === "anime";
+  const showTv = pool === "all" || pool === "tv" || pool === "animation" || pool === "anime";
 
   return (
     <div className="flex flex-col gap-10">
       <DiscoverFilters />
-      {content === "movie" && <MovieDiscoverList />}
-      {content === "tv" && <TvShowDiscoverList />}
+      {showMovies && <MovieDiscoverList />}
+      {showTv && <TvShowDiscoverList />}
     </div>
   );
 };

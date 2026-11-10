@@ -56,15 +56,17 @@ export const tmdb = {
       get(`trending/${mediaType}/${timeWindow}`, pageOnly(options))) as TMDB["trending"]["trending"],
   },
   discover: {
-    movie: ((options) =>
+    movie: ((options: any) =>
       get("discover/movie", {
         page: options?.page,
         with_genres: options?.with_genres,
+        with_origin_country: options?.with_origin_country,
       })) as TMDB["discover"]["movie"],
-    tvShow: ((options) =>
+    tvShow: ((options: any) =>
       get("discover/tv", {
         page: options?.page,
         with_genres: options?.with_genres,
+        with_origin_country: options?.with_origin_country,
       })) as TMDB["discover"]["tvShow"],
   },
   search: {

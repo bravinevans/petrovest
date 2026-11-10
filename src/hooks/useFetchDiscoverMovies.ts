@@ -8,20 +8,28 @@ interface FetchDiscoverMovies {
   page?: number;
   type?: DiscoverMoviesFetchQueryType;
   genres?: string;
+  originCountry?: string;
 }
 
 const useFetchDiscoverMovies = ({
   page = 1,
   type = "discover",
   genres,
+  originCountry,
 }: FetchDiscoverMovies): Promise<MovieDiscoverResult> => {
-  const discover = () => tmdb.discover.movie({ page: page, with_genres: genres });
-  const todayTrending = () => tmdb.trending.trending("movie", "day", { page: page });
-  const thisWeekTrending = () => tmdb.trending.trending("movie", "week", { page: page });
-  const popular = () => tmdb.movies.popular({ page: page });
-  const nowPlaying = () => tmdb.movies.nowPlaying({ page: page });
-  const upcoming = () => tmdb.movies.upcoming({ page: page });
-  const topRated = () => tmdb.movies.topRated({ page: page });
+  const discover = () =>
+    tmdb.discover.movie({
+      page,
+      with_genres: genres,
+      with_origin_country: originCountry,
+    } as any);
+
+  const todayTrending = () => tmdb.trending.trending("movie", "day", { page });
+  const thisWeekTrending = () => tmdb.trending.trending("movie", "week", { page });
+  const popular = () => tmdb.movies.popular({ page });
+  const nowPlaying = () => tmdb.movies.nowPlaying({ page });
+  const upcoming = () => tmdb.movies.upcoming({ page });
+  const topRated = () => tmdb.movies.topRated({ page });
 
   const queryData = {
     discover,
