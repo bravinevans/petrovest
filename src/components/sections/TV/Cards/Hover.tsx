@@ -31,10 +31,7 @@ const TvShowHoverCard: React.FC<{ id: number; fullWidth?: boolean }> = ({ id, fu
   const releaseYears = `${firstReleaseYear} ${firstReleaseYear !== lastReleaseYear ? ` - ${lastReleaseYear}` : ""}`;
   const fullTitle = title;
   const backdropImage = getImageUrl(tv.backdrop_path, "backdrop");
-  const titleImage = getImageUrl(
-    tv.images.logos.find((logo) => logo.iso_639_1 === "en")?.file_path,
-    "title",
-  );
+  const titleImage = getImageUrl(tv.images.logos.find((logo) => logo.iso_639_1 === "en")?.file_path, "title");
   const bookmarkData: SavedMovieDetails = {
     type: "tv",
     adult: "adult" in tv ? (tv.adult as boolean) : false,
@@ -48,76 +45,30 @@ const TvShowHoverCard: React.FC<{ id: number; fullWidth?: boolean }> = ({ id, fu
   };
 
   return (
-    <div
-      className={cn("w-80", {
-        "w-full": fullWidth,
-      })}
-    >
+    <div className={cn("w-80", { "w-full": fullWidth })}>
       <div className="relative">
         <div className="absolute aspect-video h-fit w-full">
-          <div className="absolute z-2 h-full w-full bg-linear-to-t from-secondary-background from-1%"></div>
+          <div className="absolute z-2 h-full w-full bg-black/40" />
           {!isEmpty(titleImage) && (
-            <Image
-              isBlurred
-              radius="none"
-              alt={fullTitle}
-              classNames={{ wrapper: "absolute-center z-1 bg-transparent" }}
-              className="h-full max-h-32 w-full drop-shadow-xl"
-              src={titleImage}
-            />
+            <Image isBlurred radius="none" alt={fullTitle} classNames={{ wrapper: "absolute-center z-1 bg-transparent" }} className="h-full max-h-32 w-full drop-shadow-xl" src={titleImage} />
           )}
-          <Image
-            radius="none"
-            alt={fullTitle}
-            className="z-0 aspect-video rounded-t-lg object-cover object-center"
-            src={backdropImage}
-          />
+          <Image radius="none" alt={fullTitle} className="z-0 aspect-video rounded-t-lg object-cover object-center" src={backdropImage} />
         </div>
         <div className="flex flex-col gap-2 p-4 pt-[40%] *:z-10">
-          <Chip
-            color="warning"
-            size="sm"
-            variant="faded"
-            className="md:text-md text-xs"
-            classNames={{ content: "font-bold" }}
-          >
-            TV
-          </Chip>
+          <Chip color="warning" size="sm" variant="faded" className="md:text-md text-xs" classNames={{ content: "font-bold" }}>TV</Chip>
           <h4 className="text-xl font-bold">{fullTitle}</h4>
           <div className="md:text-md flex flex-wrap gap-1 text-xs md:gap-2">
-            <div className="flex items-center gap-1">
-              <Season />
-              <span>
-                {tv.number_of_seasons} Season{tv.number_of_seasons > 1 ? "s" : ""}
-              </span>
-            </div>
+            <div className="flex items-center gap-1"><Season /><span>{tv.number_of_seasons} Season{tv.number_of_seasons > 1 ? "s" : ""}</span></div>
             <p>&#8226;</p>
-            <div className="flex items-center gap-1">
-              <List />
-              <span>
-                {tv.number_of_episodes} Episode{tv.number_of_episodes > 1 ? "s" : ""}
-              </span>
-            </div>
+            <div className="flex items-center gap-1"><List /><span>{tv.number_of_episodes} Episode{tv.number_of_episodes > 1 ? "s" : ""}</span></div>
             <p>&#8226;</p>
-            <div className="flex items-center gap-1">
-              <Calendar />
-              <span>{releaseYears}</span>
-            </div>
+            <div className="flex items-center gap-1"><Calendar /><span>{releaseYears}</span></div>
             <p>&#8226;</p>
             <Rating rate={tv.vote_average} count={tv.vote_count} />
           </div>
           <Genres genres={tv.genres} type="tv" />
           <div className="flex w-full justify-between gap-2 py-1">
-            <Button
-              as={Link}
-              href={`/tv/${tv.id}`}
-              fullWidth
-              color="warning"
-              variant="shadow"
-              startContent={<Play size={24} />}
-            >
-              View Episodes
-            </Button>
+            <Button as={Link} href={`/tv/${tv.id}`} fullWidth color="warning" variant="shadow" startContent={<Play size={24} />}>View Episodes</Button>
             <BookmarkButton data={bookmarkData} isTooltipDisabled />
           </div>
           <p className="text-sm">{tv.overview}</p>

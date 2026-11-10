@@ -19,9 +19,8 @@ const TvShowBackdropSection: React.FC<{
 
   return (
     <section id="backdrop" className="fixed inset-0 h-[35vh] md:h-[50vh] lg:h-[70vh]">
-      <div className="absolute inset-0 z-10 bg-background" style={{ opacity: opacity }} />
-      <div className="absolute inset-0 z-2 bg-linear-to-b from-background from-1% via-transparent via-30%" />
-      <div className="absolute inset-0 z-2 translate-y-px bg-linear-to-t from-background from-1% via-transparent via-55%" />
+      <div className="absolute inset-0 z-10 bg-background" style={{ opacity }} />
+      <div className="absolute inset-0 z-2 bg-black/35" />
       {!isEmpty(titleImage) && (
         <Image
           isBlurred
