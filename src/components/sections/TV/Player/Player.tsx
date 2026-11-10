@@ -20,7 +20,7 @@ export interface TvShowPlayerProps {
 }
 
 const IFRAME_SANDBOX =
-  "allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation-by-user-activation";
+  "allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation";
 
 const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   id,
