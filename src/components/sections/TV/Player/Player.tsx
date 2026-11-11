@@ -32,7 +32,6 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 }) => {
   const [selectedServer, setSelectedServer] = useState(0);
   const [episodeSelectionOpen, setEpisodeSelectionOpen] = useState(false);
-  const [strictShield, setStrictShield] = useState(true);
   const tmdbId = String(id);
   const season = String(episode.season_number);
   const episodeNumber = String(episode.episode_number);
@@ -80,6 +79,15 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
       <div className="mx-auto w-full max-w-6xl">
         <header className="mb-5 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-800 pb-4">
           <div>
+            <div className="mb-3">
+              <Link
+                href={`/tv/${id}`}
+                className="inline-flex items-center gap-2 border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-white"
+              >
+                <span aria-hidden="true">&larr;</span>
+                <span>Back to series</span>
+              </Link>
+            </div>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
               Petrovest Streaming
             </p>
@@ -116,47 +124,35 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
         <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900">
           <iframe
-            key={`${tmdbId}-${season}-${episodeNumber}-${selectedServer}-${strictShield}`}
+            key={`${tmdbId}-${season}-${episodeNumber}-${selectedServer}`}
             src={activeServer.src}
             title={`${seriesName} — ${episode.name} — ${activeServer.label}`}
             allowFullScreen
-            {...(strictShield ? { sandbox: "allow-scripts allow-same-origin allow-forms allow-presentation" } : {})}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             className="block size-full border-none"
           />
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-4">
-          <nav aria-label="Choose a streaming server" className="flex flex-wrap items-center gap-2">
-            {servers.map((server, index) => {
-              const isActive = selectedServer === index;
-              return (
-                <button
-                  key={server.label}
-                  type="button"
-                  aria-pressed={isActive}
-                  onClick={() => setSelectedServer(index)}
-                  className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "border-zinc-100 bg-zinc-100 text-zinc-950"
-                      : "border-zinc-700 bg-zinc-950 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-                  }`}
-                >
-                  {server.label}
-                </button>
-              );
-            })}
-          </nav>
-
-          <button
-            type="button"
-            aria-pressed={strictShield}
-            onClick={() => setStrictShield((prev) => !prev)}
-            className="min-h-10 border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 transition-colors"
-          >
-            {strictShield ? "Pop-up Block: Active" : "Pop-up Block: Off"}
-          </button>
-        </div>
+        <nav aria-label="Choose a streaming server" className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4">
+          {servers.map((server, index) => {
+            const isActive = selectedServer === index;
+            return (
+              <button
+                key={server.label}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => setSelectedServer(index)}
+                className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "border-zinc-100 bg-zinc-100 text-zinc-950"
+                    : "border-zinc-700 bg-zinc-950 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                }`}
+              >
+                {server.label}
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
       <EpisodeSelection
