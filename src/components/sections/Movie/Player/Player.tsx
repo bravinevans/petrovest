@@ -48,6 +48,10 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
       label: "Server 6 (NontonGo)",
       src: ["https://", "www.nontongo.win", "/embed/movie/", tmdbId].join(""),
     },
+    {
+      label: "Server 7 (VidLink Alt)",
+      src: ["https://", "vidlink.pro", "/movie/", tmdbId, "?download=true"].join(""),
+    },
   ], [tmdbId, startAt]);
 
   const activeServer = servers[selectedServer] || servers.at(0)!;
