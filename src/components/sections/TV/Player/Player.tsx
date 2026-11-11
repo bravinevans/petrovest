@@ -86,7 +86,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
     },
   ], [tmdbId, season, episodeNumber, startAt]);
 
-  const activeServer = servers[selectedServer] || servers;
+  const activeServer = servers[selectedServer] || servers.at(0)!;
   const previousHref = prevEpisodeNumber ? `/tv/${id}/${season}/${prevEpisodeNumber}/player` : undefined;
   const nextHref = nextEpisodeNumber ? `/tv/${id}/${season}/${nextEpisodeNumber}/player` : undefined;
 
