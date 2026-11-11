@@ -22,6 +22,7 @@ export interface TvShowPlayerProps {
 }
 
 const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
+  tv,
   id,
   seriesName,
   seasonName,
@@ -69,6 +70,10 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
     {
       label: "Server 6 (NontonGo)",
       src: ["https://", "www.nontongo.win", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
+    },
+    {
+      label: "Server 7 (VidLink Alt)",
+      src: ["https://", "vidlink.pro", "/tv/", tmdbId, "/", season, "/", episodeNumber, "?download=true"].join(""),
     },
   ], [tmdbId, season, episodeNumber, startAt]);
 
@@ -176,6 +181,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
         onClose={() => setDownloadOpen(false)}
         title={`${seriesName} S${season}E${episodeNumber}`}
         tmdbId={tmdbId}
+        imdbId={(tv as any)?.external_ids?.imdb_id || (tv as any)?.imdb_id}
         type="tv"
         season={episode.season_number}
         episode={episode.episode_number}
