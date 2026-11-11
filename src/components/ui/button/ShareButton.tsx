@@ -45,12 +45,11 @@ const SHARE_BUTTONS = [
 
 export const ShareButton: React.FC<ShareButtonProps> = ({ title, id, type = "movie" }) => {
   const [opened, { open, close }] = useDisclosure(false);
-  
-  // Safely check for execution inside a browser window context
-  const shareUrl = typeof window !== "undefined" 
+
+  const shareUrl = typeof window !== "undefined"
     ? `https://${window.location.hostname}/${type}/${id}`
     : `https://petrovest.co.ke{type}/${id}`;
-    
+
   const description = `Check out and stream ${title} on Petrovest for FREE!!`;
 
   return (
