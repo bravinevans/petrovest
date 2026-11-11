@@ -14,6 +14,7 @@ interface MoviePlayerProps {
 
 const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   const [selectedServer, setSelectedServer] = useState(0);
+  const [adShield, setAdShield] = useState(true);
   const tmdbId = String(movie.id);
   const title = mutateMovieTitle(movie);
 
@@ -34,8 +35,8 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
       src: ["https://", "www.2embed.cc", "/embed/", tmdbId].join(""),
     },
     {
-      label: "Server 4 (EmbedSu)",
-      src: ["https://", "embed.su", "/embed/movie/", tmdbId].join(""),
+      label: "Server 4 (VidSrc SH)",
+      src: ["https://", "vidsrc.sh", "/embed/movie/", tmdbId].join(""),
     },
     {
       label: "Server 5 (VidSrc Me)",
@@ -52,19 +53,35 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   return (
     <main className="min-h-dvh bg-zinc-950 px-4 py-6 text-zinc-100 md:px-8 md:py-10">
       <div className="mx-auto w-full max-w-6xl">
-        <header className="mb-5 border-b border-zinc-800 pb-4">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
-            Petrovest Streaming
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
+        <header className="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-4">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+              Petrovest Streaming
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
+          </div>
+
+          <button
+            type="button"
+            aria-pressed={adShield}
+            onClick={() => setAdShield((prev) => !prev)}
+            className={`min-h-10 border px-4 py-2 text-xs font-mono uppercase tracking-wider transition-colors ${
+              adShield
+                ? "border-emerald-500/50 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/50"
+                : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+            }`}
+          >
+            {adShield ? "Ads Shield: ON (Pop-ups Blocked)" : "Ads Shield: OFF"}
+          </button>
         </header>
 
         <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900">
           <iframe
-            key={`${tmdbId}-${selectedServer}`}
+            key={`${tmdbId}-${selectedServer}-${adShield}`}
             src={activeServer.src}
             title={`${title} — ${activeServer.label}`}
             allowFullScreen
+            {...(adShield ? { sandbox: "allow-scripts allow-same-origin allow-forms allow-presentation" } : {})}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             className="block size-full border-none"
           />
