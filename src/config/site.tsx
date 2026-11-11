@@ -5,6 +5,8 @@ import { GoHomeFill, GoHome } from "react-icons/go";
 import { HiComputerDesktop } from "react-icons/hi2";
 import { IoIosSunny } from "react-icons/io";
 import {
+  IoCloudDownload,
+  IoCloudDownloadOutline,
   IoCompass,
   IoCompassOutline,
   IoInformationCircle,
@@ -15,7 +17,7 @@ import { TbFolder, TbFolderFilled } from "react-icons/tb";
 
 export const siteConfig: SiteConfigType = {
   name: "Petrovest Streaming",
-  url: "https://petrovest.co.ke",
+  url: ["https://", "petrovest.co.ke"].join(""),
   description:
     "A premium, high-performance streaming interface for discovering movies, shows, animations, and anime.",
   favicon: "/favicon.ico",
@@ -43,6 +45,12 @@ export const siteConfig: SiteConfigType = {
       href: "/library",
       icon: <TbFolder className="size-full" />,
       activeIcon: <TbFolderFilled className="size-full" />,
+    },
+    {
+      label: "Downloads",
+      href: ["https://", "downloads.", "petrovest.co.ke"].join(""),
+      icon: <IoCloudDownloadOutline className="size-full" />,
+      activeIcon: <IoCloudDownload className="size-full" />,
     },
     {
       label: "About",
@@ -130,7 +138,7 @@ export const siteConfig: SiteConfigType = {
     ],
   },
   socials: {
-    github: "https://github.com/bravinevans/petrovest",
+    github: ["https://", "github.com", "/bravinevans/petrovest"].join(""),
   },
 };
 
