@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 
-const STORAGE_KEY = "petrovest_adblock_notice_seen";
+const STORAGE_KEY = "petrovest_first_visit_ad_notice_v1";
 
 export const AdblockNoticeModal: React.FC = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     try {
-      const seen = sessionStorage.getItem(STORAGE_KEY);
+      const seen = localStorage.getItem(STORAGE_KEY);
       if (!seen) {
         setOpen(true);
       }
@@ -18,11 +18,11 @@ export const AdblockNoticeModal: React.FC = () => {
     }
   }, []);
 
-  const handleDismiss = () => {
+  const handleUnderstand = () => {
     try {
-      sessionStorage.setItem(STORAGE_KEY, "true");
+      localStorage.setItem(STORAGE_KEY, "true");
     } catch {
-      // Ignore storage errors
+      // Ignore storage restrictions
     }
     setOpen(false);
   };
@@ -38,35 +38,24 @@ export const AdblockNoticeModal: React.FC = () => {
     >
       <div className="w-full max-w-md border border-zinc-800 bg-zinc-950 p-6 text-zinc-100 shadow-2xl">
         <p className="text-xs font-mono uppercase tracking-[0.2em] text-amber-400">
-          Viewing Tip
+          Notice
         </p>
         <h2 id="adblock-notice-title" className="mt-2 text-xl font-semibold tracking-tight">
-          Best Streaming Experience
+          Welcome to Petrovest Streaming
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-zinc-300">
-          Since Petrovest uses external third-party streaming servers, you may encounter frequent pop-up ads when pressing play.
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-zinc-300">
-          We strongly recommend using an ad blocker like{" "}
-          <span className="font-semibold text-white">uBlock Origin</span> or a browser like{" "}
-          <span className="font-semibold text-white">Brave</span> for the best, uninterrupted experience.
+          Because our content streams from external servers, you may see pop-ups or ads. For the smoothest viewing experience, we recommend using the{" "}
+          <span className="font-semibold text-white">Brave browser</span> or an ad blocker like{" "}
+          <span className="font-semibold text-white">uBlock Origin</span>.
         </p>
 
-        <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
-          <a
-            href={["https://", "brave.com"].join("")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border border-zinc-700 bg-zinc-900 px-4 py-2 text-xs font-mono uppercase tracking-wider text-zinc-200 transition-colors hover:bg-zinc-800"
-          >
-            Get Brave &nearr;
-          </a>
+        <div className="mt-6 flex justify-end">
           <button
             type="button"
-            onClick={handleDismiss}
-            className="border border-zinc-100 bg-zinc-100 px-5 py-2 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300"
+            onClick={handleUnderstand}
+            className="border border-zinc-100 bg-zinc-100 px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300"
           >
-            Got It, Continue
+            I Understand
           </button>
         </div>
       </div>
