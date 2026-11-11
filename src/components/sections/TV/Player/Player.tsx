@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
 import { useDocumentTitle } from "@mantine/hooks";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Episode, TvShowDetails } from "tmdb-ts";
 import EpisodeSelection from "./EpisodeSelection";
 
@@ -35,6 +35,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const [selectedServer, setSelectedServer] = useState(0);
   const [episodeSelectionOpen, setEpisodeSelectionOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
+  const [redirectGuard, setRedirectGuard] = useState(true);
   const tmdbId = String(id);
   const season = String(episode.season_number);
   const episodeNumber = String(episode.episode_number);
@@ -46,10 +47,23 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
   useDocumentTitle(`Play ${seriesName} - ${seasonName} - ${episode.name} | ${siteConfig.name}`);
 
+  // Prevents external ad iframes from hijacking the main browser tab
+  useEffect(() => {
+    if (!redirectGuard) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [redirectGuard]);
+
   const servers = useMemo(() => [
     {
-      label: "Server 1 (VidLink)",
-      src: ["https://", "vidlink.pro", "/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoplay=false", startAt ? `&startAt=${startAt}` : ""].join(""),
+      label: "Server 1 (VidLink Alt)",
+      src: ["https://", "vidlink.pro", "/tv/", tmdbId, "/", season, "/", episodeNumber, "?download=true"].join(""),
     },
     {
       label: "Server 2 (SmashStream)",
@@ -72,8 +86,8 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
       src: ["https://", "www.nontongo.win", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
     },
     {
-      label: "Server 7 (VidLink Alt)",
-      src: ["https://", "vidlink.pro", "/tv/", tmdbId, "/", season, "/", episodeNumber, "?download=true"].join(""),
+      label: "Server 7 (VidLink)",
+      src: ["https://", "vidlink.pro", "/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoplay=false", startAt ? `&startAt=${startAt}` : ""].join(""),
     },
   ], [tmdbId, season, episodeNumber, startAt]);
 
@@ -89,6 +103,7 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
             <div className="mb-3">
               <Link
                 href={`/tv/${id}`}
+                onClick={() => setRedirectGuard(false)}
                 className="inline-flex items-center gap-2 border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-white"
               >
                 <span aria-hidden="true">&larr;</span>
@@ -106,7 +121,11 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
 
           <nav aria-label="Episode navigation" className="flex flex-wrap gap-2">
             {previousHref ? (
-              <Link href={previousHref} className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800">
+              <Link
+                href={previousHref}
+                onClick={() => setRedirectGuard(false)}
+                className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800"
+              >
                 Previous episode
               </Link>
             ) : (
@@ -120,7 +139,11 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
               Episodes
             </button>
             {nextHref ? (
-              <Link href={nextHref} className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800">
+              <Link
+                href={nextHref}
+                onClick={() => setRedirectGuard(false)}
+                className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800"
+              >
                 Next episode
               </Link>
             ) : (
@@ -147,26 +170,41 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
           />
         </div>
 
-        <nav aria-label="Choose a streaming server" className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4">
-          {servers.map((server, index) => {
-            const isActive = selectedServer === index;
-            return (
-              <button
-                key={server.label}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => setSelectedServer(index)}
-                className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "border-zinc-100 bg-zinc-100 text-zinc-950"
-                    : "border-zinc-700 bg-zinc-950 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-                }`}
-              >
-                {server.label}
-              </button>
-            );
-          })}
-        </nav>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-4">
+          <nav aria-label="Choose a streaming server" className="flex flex-wrap items-center gap-2">
+            {servers.map((server, index) => {
+              const isActive = selectedServer === index;
+              return (
+                <button
+                  key={server.label}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => setSelectedServer(index)}
+                  className={`min-h-10 border px-4 py-2 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "border-zinc-100 bg-zinc-100 text-zinc-950"
+                      : "border-zinc-700 bg-zinc-950 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                  }`}
+                >
+                  {server.label}
+                </button>
+              );
+            })}
+          </nav>
+
+          <button
+            type="button"
+            aria-pressed={redirectGuard}
+            onClick={() => setRedirectGuard((prev) => !prev)}
+            className={`min-h-10 border px-3 py-2 text-xs font-mono transition-colors ${
+              redirectGuard
+                ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-300"
+                : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-zinc-200"
+            }`}
+          >
+            {redirectGuard ? "Redirect Guard: ON" : "Redirect Guard: OFF"}
+          </button>
+        </div>
       </div>
 
       <EpisodeSelection
