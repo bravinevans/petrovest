@@ -48,7 +48,7 @@ export const siteConfig: SiteConfigType = {
     },
     {
       label: "Downloads",
-      href: ["https://", "downloads.", "petrovest.co.ke"].join(""),
+      href: "/downloads",
       icon: <IoCloudDownloadOutline className="size-full" />,
       activeIcon: <IoCloudDownload className="size-full" />,
     },
