@@ -103,7 +103,7 @@ export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
 
     if (!sdkLoadedRef.current) {
       const script = document.createElement("script");
-      script.src = "https://jsdelivr.net";
+      script.src = ["https://", "cdn.jsdelivr.net", "/npm/@webtor/embed-sdk-js/dist/index.min.js"].join("");
       script.charset = "utf-8";
       script.async = true;
       document.body.appendChild(script);
@@ -121,18 +121,21 @@ export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
     }
   };
 
+  const encodedTitle = encodeURIComponent(title);
+  const encodedFzQuery = encodeURIComponent(`site:fzmovies.net ${title}`);
+
   const webSearchMirrors = [
     {
       name: "Direct Web Mirror — NKIRI (Fast MP4)",
-      url: `https://nkiri.com{encodeURIComponent(title)}`,
+      url: ["https://", "nkiri.com", "/?s=", encodedTitle].join(""),
     },
     {
       name: "Direct Web Mirror — FZMovies (Mobile MP4)",
-      url: `https://google.com{encodeURIComponent(`site:fzmovies.net ${title}`)}`,
+      url: ["https://", "www.google.com", "/search?q=", encodedFzQuery].join(""),
     },
     {
       name: "Direct Web Mirror — Pahe (720p / 1080p MKV)",
-      url: `https://pahe.ink{encodeURIComponent(title)}`,
+      url: ["https://", "pahe.ink", "/?s=", encodedTitle].join(""),
     },
   ];
 
