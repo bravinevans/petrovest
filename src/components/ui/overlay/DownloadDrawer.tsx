@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import VaulDrawer from "@/components/ui/overlay/VaulDrawer";
 import { Spinner } from "@heroui/react";
 import type { TorrentOption } from "@/app/api/downloads/route";
@@ -16,6 +16,12 @@ export interface DownloadDrawerProps {
   episode?: number;
 }
 
+declare global {
+  interface Window {
+    webtor?: any[];
+  }
+}
+
 export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
   opened,
   onClose,
@@ -25,13 +31,19 @@ export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
   season,
   episode,
 }) => {
-  const [activeTab, setActiveTab] = useState<"torrents" | "grabber">("torrents");
   const [torrents, setTorrents] = useState<TorrentOption[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeMagnet, setActiveMagnet] = useState<string | null>(null);
+  const [activeLabel, setActiveLabel] = useState<string>("");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const sdkLoadedRef = useRef(false);
 
   useEffect(() => {
-    if (!opened || !imdbId) return;
+    if (!opened) {
+      setActiveMagnet(null);
+      return;
+    }
+    if (!imdbId) return;
 
     let cancelled = false;
     setLoading(true);
@@ -47,17 +59,10 @@ export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
     fetch(`/api/downloads?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
-        if (!cancelled) {
-          const list = data.torrents || [];
-          setTorrents(list);
-          if (list.length === 0) setActiveTab("grabber");
-        }
+        if (!cancelled) setTorrents(data.torrents || []);
       })
       .catch(() => {
-        if (!cancelled) {
-          setTorrents([]);
-          setActiveTab("grabber");
-        }
+        if (!cancelled) setTorrents([]);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -67,6 +72,44 @@ export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
       cancelled = true;
     };
   }, [opened, type, imdbId, title, season, episode]);
+
+  useEffect(() => {
+    if (!activeMagnet || typeof window === "undefined") return;
+
+    const container = document.getElementById("webtor-download-box");
+    if (container) container.innerHTML = "";
+
+    window.webtor = window.webtor || [];
+    window.webtor.push({
+      id: "webtor-download-box",
+      magnet: activeMagnet,
+      title: `${title} (${activeLabel})`,
+      imdbId: imdbId || undefined,
+      width: "100%",
+      lang: "en",
+      features: {
+        download: true,
+        subtitles: true,
+        settings: true,
+        fullscreen: true,
+        playpause: true,
+        currentTime: true,
+        timeline: true,
+        duration: true,
+        volume: true,
+        embed: false,
+      },
+    });
+
+    if (!sdkLoadedRef.current) {
+      const script = document.createElement("script");
+      script.src = "https://jsdelivr.net";
+      script.charset = "utf-8";
+      script.async = true;
+      document.body.appendChild(script);
+      sdkLoadedRef.current = true;
+    }
+  }, [activeMagnet, activeLabel, title, imdbId]);
 
   const handleCopyMagnet = async (magnet: string, idx: number) => {
     try {
@@ -78,52 +121,54 @@ export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
     }
   };
 
-  const openIn1DM = () => {
-    if (typeof window === "undefined") return;
-    const currentUrl = window.location.href.replace(/^https?:\/\//, "");
-    window.location.href = `intent://${currentUrl}#Intent;scheme=https;package=idm.internet.download.manager;end`;
-  };
+  const webSearchMirrors = [
+    {
+      name: "Direct Web Mirror — NKIRI (Fast MP4)",
+      url: `https://nkiri.com{encodeURIComponent(title)}`,
+    },
+    {
+      name: "Direct Web Mirror — FZMovies (Mobile MP4)",
+      url: `https://google.com{encodeURIComponent(`site:fzmovies.net ${title}`)}`,
+    },
+    {
+      name: "Direct Web Mirror — Pahe (720p / 1080p MKV)",
+      url: `https://pahe.ink{encodeURIComponent(title)}`,
+    },
+  ];
 
   return (
     <VaulDrawer open={opened} onClose={onClose} backdrop="blur" title={`Download — ${title}`}>
-      <div className="px-6 pb-8 pt-2 text-zinc-100">
-        <div className="mb-5 flex border border-zinc-800 bg-zinc-950 p-1">
-          <button
-            type="button"
-            onClick={() => setActiveTab("torrents")}
-            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-colors ${
-              activeTab === "torrents"
-                ? "bg-zinc-100 text-zinc-950 font-semibold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            Direct Releases {torrents.length > 0 ? `(${torrents.length})` : ""}
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("grabber")}
-            className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-colors ${
-              activeTab === "grabber"
-                ? "bg-zinc-100 text-zinc-950 font-semibold"
-                : "text-zinc-400 hover:text-zinc-200"
-            }`}
-          >
-            Browser / 1DM Grabber
-          </button>
-        </div>
+      <div className="space-y-6 px-6 pb-8 pt-2 text-zinc-100">
+        {activeMagnet && (
+          <div className="border border-zinc-700 bg-zinc-950 p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-xs font-mono uppercase tracking-wider text-emerald-400">
+                Cloud Downloader Active ({activeLabel}) — Click the Download Icon Inside
+              </span>
+              <button
+                type="button"
+                onClick={() => setActiveMagnet(null)}
+                className="text-xs font-mono text-zinc-400 hover:text-white"
+              >
+                Close &times;
+              </button>
+            </div>
+            <div id="webtor-download-box" className="min-h-[260px] w-full overflow-hidden bg-black" />
+          </div>
+        )}
 
-        {activeTab === "torrents" && (
-          <div className="space-y-3">
-            <p className="text-xs text-zinc-400">
-              Verified releases with exact file sizes. Use 1DM, LibreTorrent, or qBittorrent to save directly to your device.
-            </p>
+        <div>
+          <h3 className="mb-2 text-xs font-mono uppercase tracking-wider text-zinc-400">
+            In-Browser Direct Downloads (Free Cloud Engine — No App Needed)
+          </h3>
 
-            {loading ? (
-              <div className="flex justify-center py-8">
-                <Spinner size="md" variant="simple" />
-              </div>
-            ) : torrents.length > 0 ? (
-              torrents.map((item, index) => (
+          {loading ? (
+            <div className="flex justify-center py-6">
+              <Spinner size="md" variant="simple" />
+            </div>
+          ) : torrents.length > 0 ? (
+            <div className="space-y-2">
+              {torrents.map((item, index) => (
                 <div
                   key={`${item.quality}-${item.type}-${index}`}
                   className="flex flex-wrap items-center justify-between gap-3 border border-zinc-800 bg-zinc-900/70 px-4 py-3"
@@ -148,65 +193,46 @@ export const DownloadDrawer: React.FC<DownloadDrawerProps> = ({
                     >
                       {copiedIndex === index ? "Copied!" : "Copy Magnet"}
                     </button>
-                    {item.torrentUrl && (
-                      <a
-                        href={item.torrentUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-mono text-zinc-200 hover:bg-zinc-800"
-                      >
-                        .Torrent
-                      </a>
-                    )}
-                    <a
-                      href={item.magnet}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveMagnet(item.magnet);
+                        setActiveLabel(`${item.quality} ${item.type}`);
+                      }}
                       className="border border-zinc-100 bg-zinc-100 px-3 py-1.5 text-xs font-mono font-semibold text-zinc-950 hover:bg-zinc-300"
                     >
-                      Download
-                    </a>
+                      Download in Browser &darr;
+                    </button>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="border border-zinc-800 bg-zinc-900/40 px-4 py-6 text-center text-xs text-zinc-400">
-                No indexed releases found for this title yet. Switch to the{" "}
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("grabber")}
-                  className="underline text-zinc-200"
-                >
-                  Browser / 1DM Grabber
-                </button>{" "}
-                tab to capture the live video stream directly.
-              </div>
-            )}
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <p className="border border-zinc-800 bg-zinc-900/40 px-4 py-4 text-xs text-zinc-400">
+              No direct cloud releases indexed for this title yet. Use the web MP4 mirrors below.
+            </p>
+          )}
+        </div>
 
-        {activeTab === "grabber" && (
-          <div className="space-y-4">
-            <div className="border border-zinc-800 bg-zinc-900/70 p-4">
-              <h3 className="text-sm font-semibold text-zinc-100">Android (1DM Download Manager)</h3>
-              <p className="mt-1 text-xs text-zinc-400">
-                Opens this exact player page inside 1DM&apos;s built-in browser so it automatically detects and downloads the MP4/HLS video stream as soon as you press Play.
-              </p>
-              <button
-                type="button"
-                onClick={openIn1DM}
-                className="mt-3 w-full border border-zinc-100 bg-zinc-100 px-4 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300"
+        <div>
+          <h3 className="mb-2 text-xs font-mono uppercase tracking-wider text-zinc-400">
+            Backup Web MP4 / MKV Mirrors
+          </h3>
+          <div className="space-y-2">
+            {webSearchMirrors.map((mirror) => (
+              <a
+                key={mirror.name}
+                href={mirror.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between border border-zinc-800 bg-zinc-900/70 px-4 py-3 text-sm font-medium text-zinc-100 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
               >
-                Open Page in 1DM App &nearr;
-              </button>
-            </div>
-
-            <div className="border border-zinc-800 bg-zinc-900/40 p-4">
-              <h3 className="text-sm font-semibold text-zinc-100">Desktop (Chrome / Edge / Firefox)</h3>
-              <p className="mt-1 text-xs text-zinc-400">
-                Install the free <strong>Video DownloadHelper</strong> or <strong>CocoCut</strong> browser extension, press Play on Server 1 or Server 2, and click the extension icon to save the full HD stream directly to your PC.
-              </p>
-            </div>
+                <span>{mirror.name}</span>
+                <span className="text-xs font-mono text-zinc-400">&nearr;</span>
+              </a>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </VaulDrawer>
   );
