@@ -58,8 +58,8 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
       src: ["https://", "www.2embed.cc", "/embedtv/", tmdbId, "&s=", season, "&e=", episodeNumber].join(""),
     },
     {
-      label: "Server 4 (EmbedSu)",
-      src: ["https://", "embed.su", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
+      label: "Server 4 (VidSrc SH)",
+      src: ["https://", "vidsrc.sh", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
     },
     {
       label: "Server 5 (VidSrc Me)",
