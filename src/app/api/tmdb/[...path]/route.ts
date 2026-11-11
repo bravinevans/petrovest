@@ -1,7 +1,7 @@
 import { env } from "@/utils/env";
 import { NextRequest } from "next/server";
 
-const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+const TMDB_BASE_URL = "https://themoviedb.org";
 
 const HOUR = 60 * 60;
 const DAY = 24 * HOUR;
@@ -75,10 +75,13 @@ const cacheHeaders = (ttl: number) => ({
 const notFound = () =>
   Response.json({ success: false, status_message: "Not found" }, { status: 404 });
 
-export const GET = async (request: NextRequest, ctx: RouteContext<"/api/tmdb/[...path]">) => {
-  // block other sites from using this route (only checked on CDN cache misses)
+export const GET = async (
+  request: NextRequest,
+  ctx: { params: Promise<{ path: string[] }> }
+) => {
   const fetchSite = request.headers.get("sec-fetch-site");
-  if (fetchSite && fetchSite !== "same-origin") {
+  // Allow same-origin, same-site, and direct/none navigation headers
+  if (fetchSite && !["same-origin", "same-site", "none"].includes(fetchSite)) {
     return Response.json({ success: false, status_message: "Forbidden" }, { status: 403 });
   }
 
