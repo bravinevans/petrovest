@@ -49,40 +49,24 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
       src: ["https://", "vidlink.pro", "/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoplay=false", startAt ? `&startAt=${startAt}` : ""].join(""),
     },
     {
-      label: "Server 2 (VidSrc To)",
-      src: ["https://", "vidsrc.to", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
-    },
-    {
-      label: "Server 3 (VidSrc XYZ)",
-      src: ["https://", "vidsrc.xyz", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
-    },
-    {
-      label: "Server 4 (VidSrc CC)",
-      src: ["https://", "vidsrc.cc", "/v2/embed/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoPlay=false"].join(""),
-    },
-    {
-      label: "Server 5 (SuperEmbed)",
-      src: ["https://", "multiembed.mov", "/directstream.php?video_id=", tmdbId, "&tmdb=1&s=", season, "&e=", episodeNumber].join(""),
-    },
-    {
-      label: "Server 6 (2Embed)",
-      src: ["https://", "www.2embed.cc", "/embedtv/", tmdbId, "&s=", season, "&e=", episodeNumber].join(""),
-    },
-    {
-      label: "Server 7 (AutoEmbed)",
-      src: ["https://", "player.autoembed.cc", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
-    },
-    {
-      label: "Server 8 (VidKing)",
-      src: ["https://", "www.vidking.net", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoplay=false"].join(""),
-    },
-    {
-      label: "Server 9 (SmashStream)",
+      label: "Server 2 (SmashStream)",
       src: ["https://", "embed.", "smashystream.com", "/playere.php?tmdb=", tmdbId, "&season=", season, "&episode=", episodeNumber].join(""),
     },
     {
-      label: "Server 10 (MoviesAPI)",
-      src: ["https://", "moviesapi.club", "/tv/", tmdbId, "-", season, "-", episodeNumber].join(""),
+      label: "Server 3 (2Embed)",
+      src: ["https://", "www.2embed.cc", "/embedtv/", tmdbId, "&s=", season, "&e=", episodeNumber].join(""),
+    },
+    {
+      label: "Server 4 (EmbedSu)",
+      src: ["https://", "embed.su", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
+    },
+    {
+      label: "Server 5 (VidSrc Me)",
+      src: ["https://", "vidsrc.me", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
+    },
+    {
+      label: "Server 6 (NontonGo)",
+      src: ["https://", "www.nontongo.win", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
     },
   ], [tmdbId, season, episodeNumber, startAt]);
 
