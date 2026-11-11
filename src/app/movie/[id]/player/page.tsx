@@ -1,39 +1,46 @@
+"use client";
+
 import { tmdb } from "@/api/tmdb-client";
 import { getMovieLastPosition } from "@/actions/histories";
 import MoviePlayer from "@/components/sections/Movie/Player/Player";
+import { Params } from "@/types";
 import { isEmpty } from "@/utils/helpers";
+import { Spinner } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
+import { NextPage } from "next";
 import { notFound } from "next/navigation";
+import { use } from "react";
 
-interface PageProps {
-  params: { id: string };
-}
+const MoviePlayerPage: NextPage<Params<{ id: string | number }>> = ({ params }) => {
+  const resolvedParams = use(params);
+  const id = Number(resolvedParams.id);
 
-export default async function MoviePlayerPage({ params }: PageProps) {
-  // Await params directly or read synchronously to satisfy all Next.js version parameters
-  const resolvedParams = await params;
-  const rawId = resolvedParams?.id;
-  
-  const id = Number(rawId);
+  if (!id || isNaN(id)) return notFound();
 
-  if (!id || isNaN(id)) {
-    return notFound();
+  const {
+    data: movie,
+    isPending,
+    error,
+  } = useQuery({
+    queryFn: () => tmdb.movies.details(id),
+    queryKey: ["movie-player-detail", id],
+    enabled: Boolean(id && !isNaN(id)),
+  });
+
+  const { data: startAt, isPending: isPendingStartAt } = useQuery({
+    queryFn: () => getMovieLastPosition(id),
+    queryKey: ["movie-player-start-at", id],
+    staleTime: 0,
+    enabled: Boolean(id && !isNaN(id)),
+  });
+
+  if (isPending || isPendingStartAt) {
+    return <Spinner size="lg" className="absolute-center" variant="simple" />;
   }
 
-  try {
-    // Execute both data handshakes simultaneously on the server node
-    const [movie, startAt] = await Promise.all([
-      tmdb.movies.details(id).catch(() => null),
-      getMovieLastPosition(id).catch(() => 0)
-    ]);
+  if (error || isEmpty(movie)) return notFound();
 
-    if (!movie || isEmpty(movie)) {
-      return notFound();
-    }
+  return <MoviePlayer movie={movie} startAt={startAt} />;
+};
 
-    // Pass the clean data directly down to the player layout
-    return <MoviePlayer movie={movie} startAt={startAt ?? 0} />;
-  } catch (error) {
-    console.error("Server-side 404 fallback routing exception:", error);
-    return notFound();
-  }
-}
+export default MoviePlayerPage;
