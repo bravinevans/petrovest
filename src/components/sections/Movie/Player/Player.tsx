@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
 import { mutateMovieTitle } from "@/utils/movies";
 import { useDocumentTitle } from "@mantine/hooks";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { MovieDetails } from "tmdb-ts/dist/types/movies";
 
@@ -53,6 +54,15 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     <main className="min-h-dvh bg-zinc-950 px-4 py-6 text-zinc-100 md:px-8 md:py-10">
       <div className="mx-auto w-full max-w-6xl">
         <header className="mb-5 border-b border-zinc-800 pb-4">
+          <div className="mb-3">
+            <Link
+              href={`/movie/${tmdbId}`}
+              className="inline-flex items-center gap-2 border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-white"
+            >
+              <span aria-hidden="true">&larr;</span>
+              <span>Back to movie</span>
+            </Link>
+          </div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
             Petrovest Streaming
           </p>
