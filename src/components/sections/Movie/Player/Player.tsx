@@ -63,7 +63,7 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
     },
   ], [tmdbId, startAt]);
 
-  const activeServer = servers[selectedServer] || servers;
+  const activeServer = servers[selectedServer] || servers.at(0)!;
 
   return (
     <main className="min-h-dvh bg-zinc-950 px-4 py-6 text-zinc-100 md:px-8 md:py-10">
