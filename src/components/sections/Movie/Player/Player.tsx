@@ -26,40 +26,24 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
       src: ["https://", "vidlink.pro", "/movie/", tmdbId, "?autoplay=false", startAt ? `&startAt=${startAt}` : ""].join(""),
     },
     {
-      label: "Server 2 (VidSrc To)",
-      src: ["https://", "vidsrc.to", "/embed/movie/", tmdbId].join(""),
-    },
-    {
-      label: "Server 3 (VidSrc XYZ)",
-      src: ["https://", "vidsrc.xyz", "/embed/movie/", tmdbId].join(""),
-    },
-    {
-      label: "Server 4 (VidSrc CC)",
-      src: ["https://", "vidsrc.cc", "/v2/embed/movie/", tmdbId, "?autoPlay=false"].join(""),
-    },
-    {
-      label: "Server 5 (SuperEmbed)",
-      src: ["https://", "multiembed.mov", "/directstream.php?video_id=", tmdbId, "&tmdb=1"].join(""),
-    },
-    {
-      label: "Server 6 (2Embed)",
-      src: ["https://", "www.2embed.cc", "/embed/", tmdbId].join(""),
-    },
-    {
-      label: "Server 7 (AutoEmbed)",
-      src: ["https://", "player.autoembed.cc", "/embed/movie/", tmdbId].join(""),
-    },
-    {
-      label: "Server 8 (VidKing)",
-      src: ["https://", "www.vidking.net", "/embed/movie/", tmdbId, "?autoplay=false"].join(""),
-    },
-    {
-      label: "Server 9 (SmashStream)",
+      label: "Server 2 (SmashStream)",
       src: ["https://", "embed.", "smashystream.com", "/playere.php?tmdb=", tmdbId].join(""),
     },
     {
-      label: "Server 10 (MoviesAPI)",
-      src: ["https://", "moviesapi.club", "/movie/", tmdbId].join(""),
+      label: "Server 3 (2Embed)",
+      src: ["https://", "www.2embed.cc", "/embed/", tmdbId].join(""),
+    },
+    {
+      label: "Server 4 (EmbedSu)",
+      src: ["https://", "embed.su", "/embed/movie/", tmdbId].join(""),
+    },
+    {
+      label: "Server 5 (VidSrc Me)",
+      src: ["https://", "vidsrc.me", "/embed/movie/", tmdbId].join(""),
+    },
+    {
+      label: "Server 6 (NontonGo)",
+      src: ["https://", "www.nontongo.win", "/embed/movie/", tmdbId].join(""),
     },
   ], [tmdbId, startAt]);
 
