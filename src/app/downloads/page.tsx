@@ -280,6 +280,6 @@ export default function DownloadsHubPage() {
           episode={selectedItem.episode}
         />
       )}
-    </main>
+    </div>
   );
 }
