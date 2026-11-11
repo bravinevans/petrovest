@@ -1,5 +1,6 @@
 "use client";
 
+import DownloadDrawer from "@/components/ui/overlay/DownloadDrawer";
 import { siteConfig } from "@/config/site";
 import { usePlayerEvents } from "@/hooks/usePlayerEvents";
 import { mutateMovieTitle } from "@/utils/movies";
@@ -15,6 +16,7 @@ interface MoviePlayerProps {
 
 const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   const [selectedServer, setSelectedServer] = useState(0);
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const tmdbId = String(movie.id);
   const title = mutateMovieTitle(movie);
 
@@ -53,20 +55,30 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   return (
     <main className="min-h-dvh bg-zinc-950 px-4 py-6 text-zinc-100 md:px-8 md:py-10">
       <div className="mx-auto w-full max-w-6xl">
-        <header className="mb-5 border-b border-zinc-800 pb-4">
-          <div className="mb-3">
-            <Link
-              href={`/movie/${tmdbId}`}
-              className="inline-flex items-center gap-2 border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-white"
-            >
-              <span aria-hidden="true">&larr;</span>
-              <span>Back to movie</span>
-            </Link>
+        <header className="mb-5 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-800 pb-4">
+          <div>
+            <div className="mb-3">
+              <Link
+                href={`/movie/${tmdbId}`}
+                className="inline-flex items-center gap-2 border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-800 hover:text-white"
+              >
+                <span aria-hidden="true">&larr;</span>
+                <span>Back to movie</span>
+              </Link>
+            </div>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
+              Petrovest Streaming
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
           </div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-400">
-            Petrovest Streaming
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
+
+          <button
+            type="button"
+            onClick={() => setDownloadOpen(true)}
+            className="min-h-10 border border-zinc-100 bg-zinc-100 px-4 py-2 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300"
+          >
+            Download Movie &darr;
+          </button>
         </header>
 
         <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900">
@@ -101,6 +113,15 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
           })}
         </nav>
       </div>
+
+      <DownloadDrawer
+        opened={downloadOpen}
+        onClose={() => setDownloadOpen(false)}
+        title={title}
+        tmdbId={tmdbId}
+        imdbId={movie.imdb_id}
+        type="movie"
+      />
     </main>
   );
 };
