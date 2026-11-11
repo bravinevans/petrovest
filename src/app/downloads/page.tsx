@@ -31,7 +31,6 @@ export default function DownloadsHubPage() {
   } | null>(null);
   const [resolvingId, setResolvingId] = useState<number | null>(null);
 
-  // TV Season/Episode selector state
   const [tvPicker, setTvPicker] = useState<{
     id: number;
     title: string;
@@ -123,7 +122,7 @@ export default function DownloadsHubPage() {
   return (
     <main className="min-h-dvh bg-zinc-950 px-4 py-10 text-zinc-100 md:px-8">
       <div className="mx-auto w-full max-w-4xl">
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-6">
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-6">
           <div>
             <p className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400">
               Petrovest Cloud Download Center
@@ -137,12 +136,16 @@ export default function DownloadsHubPage() {
           </div>
 
           <Link
-            href="https://petrovest.co.ke"
+            href="/"
             className="border border-zinc-700 bg-zinc-900 px-4 py-2 text-xs font-mono uppercase tracking-wider text-zinc-200 transition-colors hover:bg-zinc-800"
           >
             &larr; Back to Streaming
           </Link>
         </header>
+
+        <div className="mb-6 border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-xs font-mono text-amber-200">
+          Some of the download links may not work properly, please bear with us as we work towards fixing it.
+        </div>
 
         <form onSubmit={handleSearch} className="mb-8 flex gap-2">
           <input
