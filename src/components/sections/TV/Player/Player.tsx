@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { siteConfig } from "@/config/site";
+import { usePlayerEvents } from "@/hooks/usePlayerEvents";
 import { useDocumentTitle } from "@mantine/hooks";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Episode, TvShowDetails } from "tmdb-ts";
 import EpisodeSelection from "./EpisodeSelection";
 
@@ -19,9 +20,6 @@ export interface TvShowPlayerProps {
   startAt?: number;
 }
 
-const IFRAME_SANDBOX =
-  "allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation";
-
 const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   id,
   seriesName,
@@ -30,34 +28,65 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   episodes,
   nextEpisodeNumber,
   prevEpisodeNumber,
+  startAt,
 }) => {
   const [selectedServer, setSelectedServer] = useState(0);
   const [episodeSelectionOpen, setEpisodeSelectionOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  
   const tmdbId = String(id);
   const season = episode.season_number;
   const episodeNumber = episode.episode_number;
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const servers = [
-    { label: "Server 1 (VidLink)", src: `https://vidlink.pro{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 2 (VidSrc To)", src: `https://vidsrc.sh{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 3 (SuperEmbed)", src: `https://multiembed.eu{tmdbId}&tmdb=1&s=${season}&e=${episodeNumber}` },
-    { label: "Server 4 (VidSrc Me)", src: `https://vidsrc.me{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 5 (2Embed)", src: `https://2embed.cc{tmdbId}&s=${season}&e=${episodeNumber}` },
-    { label: "Server 6 (AutoEmbed)", src: `https://autoembed.cc{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 7 (NonoEmbed)", src: `https://nono.id{tmdbId}/${season}/${episodeNumber}` },
-    { label: "Server 8 (SmashStream)", src: `https://smashystream.com{tmdbId}&season=${season}&episode=${episodeNumber}` },
-    { label: "Server 9 (Flicktstream)", src: `https://flicktstream.com{tmdbId}/${season}/${episodeNumber}` }
-  ];
+  usePlayerEvents({
+    saveHistory: true,
+    metadata: { season, episode: episodeNumber },
+  });
 
   useDocumentTitle(`Play ${seriesName} - ${seasonName} - ${episode.name} | ${siteConfig.name}`);
 
-  const activeServer = servers[selectedServer];
+  const servers = useMemo(() => [
+    {
+      label: "Server 1 (VidLink)",
+      src: `https://vidlink.pro{tmdbId}/${season}/${episodeNumber}?autoplay=false${startAt ? `&startAt=${startAt}` : ""}`,
+    },
+    {
+      label: "Server 2 (VidSrc To)",
+      src: `https://vidsrc.to{tmdbId}/${season}/${episodeNumber}`,
+    },
+    {
+      label: "Server 3 (VidSrc XYZ)",
+      src: `https://vidsrc.xyz{tmdbId}/${season}/${episodeNumber}`,
+    },
+    {
+      label: "Server 4 (VidSrc CC)",
+      src: `https://vidsrc.cc{tmdbId}/${season}/${episodeNumber}?autoPlay=false`,
+    },
+    {
+      label: "Server 5 (SuperEmbed)",
+      src: `https://multiembed.mov{tmdbId}&tmdb=1&s=${season}&e=${episodeNumber}`,
+    },
+    {
+      label: "Server 6 (2Embed)",
+      src: `https://2embed.cc{tmdbId}&s=${season}&e=${episodeNumber}`,
+    },
+    {
+      label: "Server 7 (AutoEmbed)",
+      src: `https://autoembed.cc{tmdbId}/${season}/${episodeNumber}`,
+    },
+    {
+      label: "Server 8 (VidKing)",
+      src: `https://vidking.net{tmdbId}/${season}/${episodeNumber}?autoplay=false`,
+    },
+    {
+      label: "Server 9 (SmashStream)",
+      src: `https://smashystream.com{tmdbId}&season=${season}&episode=${episodeNumber}`,
+    },
+    {
+      label: "Server 10 (MoviesAPI)",
+      src: `https://moviesapi.club{tmdbId}-${season}-${episodeNumber}`,
+    },
+  ], [tmdbId, season, episodeNumber, startAt]);
+
+  const activeServer = servers[selectedServer] || servers[0];
   const previousHref = prevEpisodeNumber ? `/tv/${id}/${season}/${prevEpisodeNumber}/player` : undefined;
   const nextHref = nextEpisodeNumber ? `/tv/${id}/${season}/${nextEpisodeNumber}/player` : undefined;
 
@@ -83,7 +112,11 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
             ) : (
               <span className="border border-zinc-800 px-4 py-2 text-sm text-zinc-600">Previous episode</span>
             )}
-            <button type="button" onClick={() => setEpisodeSelectionOpen(true)} className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800">
+            <button
+              type="button"
+              onClick={() => setEpisodeSelectionOpen(true)}
+              className="border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800"
+            >
               Episodes
             </button>
             {nextHref ? (
@@ -96,22 +129,15 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
           </nav>
         </header>
 
-        <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900 flex items-center justify-center">
-          {isMounted ? (
-            <iframe
-              key={`${tmdbId}-${season}-${episodeNumber}-${selectedServer}`}
-              src={activeServer.src}
-              title={`${seriesName} — ${episode.name} — ${activeServer.label}`}
-              allowFullScreen
-              sandbox={IFRAME_SANDBOX}
-              referrerPolicy="no-referrer"
-              className="block size-full border-none"
-            />
-          ) : (
-            <div className="text-sm font-mono text-zinc-500 uppercase tracking-widest animate-pulse">
-              Initializing Secure Stream Pipeline...
-            </div>
-          )}
+        <div className="aspect-video w-full overflow-hidden border border-zinc-800 bg-zinc-900">
+          <iframe
+            key={`${tmdbId}-${season}-${episodeNumber}-${selectedServer}`}
+            src={activeServer.src}
+            title={`${seriesName} — ${episode.name} — ${activeServer.label}`}
+            allowFullScreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            className="block size-full border-none"
+          />
         </div>
 
         <nav aria-label="Choose a streaming server" className="mt-4 flex flex-wrap items-center gap-2 border-b border-zinc-800 pb-4">
@@ -136,7 +162,12 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
         </nav>
       </div>
 
-      <EpisodeSelection id={id} opened={episodeSelectionOpen} onClose={() => setEpisodeSelectionOpen(false)} episodes={episodes} />
+      <EpisodeSelection
+        id={id}
+        opened={episodeSelectionOpen}
+        onClose={() => setEpisodeSelectionOpen(false)}
+        episodes={episodes}
+      />
     </main>
   );
 };
