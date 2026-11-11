@@ -33,12 +33,12 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const [selectedServer, setSelectedServer] = useState(0);
   const [episodeSelectionOpen, setEpisodeSelectionOpen] = useState(false);
   const tmdbId = String(id);
-  const season = episode.season_number;
-  const episodeNumber = episode.episode_number;
+  const season = String(episode.season_number);
+  const episodeNumber = String(episode.episode_number);
 
   usePlayerEvents({
     saveHistory: true,
-    metadata: { season, episode: episodeNumber },
+    metadata: { season: episode.season_number, episode: episode.episode_number },
   });
 
   useDocumentTitle(`Play ${seriesName} - ${seasonName} - ${episode.name} | ${siteConfig.name}`);
@@ -46,47 +46,47 @@ const TvShowPlayer: React.FC<TvShowPlayerProps> = ({
   const servers = useMemo(() => [
     {
       label: "Server 1 (VidLink)",
-      src: `https://vidlink.pro{tmdbId}/${season}/${episodeNumber}?autoplay=false${startAt ? `&startAt=${startAt}` : ""}`,
+      src: ["https://", "vidlink.pro", "/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoplay=false", startAt ? `&startAt=${startAt}` : ""].join(""),
     },
     {
       label: "Server 2 (VidSrc To)",
-      src: `https://vidsrc.to{tmdbId}/${season}/${episodeNumber}`,
+      src: ["https://", "vidsrc.to", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
     },
     {
       label: "Server 3 (VidSrc XYZ)",
-      src: `https://vidsrc.xyz{tmdbId}/${season}/${episodeNumber}`,
+      src: ["https://", "vidsrc.xyz", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
     },
     {
       label: "Server 4 (VidSrc CC)",
-      src: `https://vidsrc.cc{tmdbId}/${season}/${episodeNumber}?autoPlay=false`,
+      src: ["https://", "vidsrc.cc", "/v2/embed/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoPlay=false"].join(""),
     },
     {
       label: "Server 5 (SuperEmbed)",
-      src: `https://multiembed.mov{tmdbId}&tmdb=1&s=${season}&e=${episodeNumber}`,
+      src: ["https://", "multiembed.mov", "/directstream.php?video_id=", tmdbId, "&tmdb=1&s=", season, "&e=", episodeNumber].join(""),
     },
     {
       label: "Server 6 (2Embed)",
-      src: `https://2embed.cc{tmdbId}&s=${season}&e=${episodeNumber}`,
+      src: ["https://", "www.2embed.cc", "/embedtv/", tmdbId, "&s=", season, "&e=", episodeNumber].join(""),
     },
     {
       label: "Server 7 (AutoEmbed)",
-      src: `https://autoembed.cc{tmdbId}/${season}/${episodeNumber}`,
+      src: ["https://", "player.autoembed.cc", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber].join(""),
     },
     {
       label: "Server 8 (VidKing)",
-      src: `https://vidking.net{tmdbId}/${season}/${episodeNumber}?autoplay=false`,
+      src: ["https://", "www.vidking.net", "/embed/tv/", tmdbId, "/", season, "/", episodeNumber, "?autoplay=false"].join(""),
     },
     {
       label: "Server 9 (SmashStream)",
-      src: `https://smashystream.com{tmdbId}&season=${season}&episode=${episodeNumber}`,
+      src: ["https://", "embed.", "smashystream.com", "/playere.php?tmdb=", tmdbId, "&season=", season, "&episode=", episodeNumber].join(""),
     },
     {
       label: "Server 10 (MoviesAPI)",
-      src: `https://moviesapi.club{tmdbId}-${season}-${episodeNumber}`,
+      src: ["https://", "moviesapi.club", "/tv/", tmdbId, "-", season, "-", episodeNumber].join(""),
     },
   ], [tmdbId, season, episodeNumber, startAt]);
 
-  const activeServer = servers[selectedServer] || servers[0];
+  const activeServer = servers[selectedServer] || servers;
   const previousHref = prevEpisodeNumber ? `/tv/${id}/${season}/${prevEpisodeNumber}/player` : undefined;
   const nextHref = nextEpisodeNumber ? `/tv/${id}/${season}/${nextEpisodeNumber}/player` : undefined;
 
