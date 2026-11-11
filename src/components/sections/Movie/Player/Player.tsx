@@ -23,47 +23,47 @@ const MoviePlayer: React.FC<MoviePlayerProps> = ({ movie, startAt }) => {
   const servers = useMemo(() => [
     {
       label: "Server 1 (VidLink)",
-      src: `https://vidlink.pro{tmdbId}?autoplay=false${startAt ? `&startAt=${startAt}` : ""}`,
+      src: ["https://", "vidlink.pro", "/movie/", tmdbId, "?autoplay=false", startAt ? `&startAt=${startAt}` : ""].join(""),
     },
     {
       label: "Server 2 (VidSrc To)",
-      src: `https://vidsrc.to{tmdbId}`,
+      src: ["https://", "vidsrc.to", "/embed/movie/", tmdbId].join(""),
     },
     {
       label: "Server 3 (VidSrc XYZ)",
-      src: `https://vidsrc.xyz{tmdbId}`,
+      src: ["https://", "vidsrc.xyz", "/embed/movie/", tmdbId].join(""),
     },
     {
       label: "Server 4 (VidSrc CC)",
-      src: `https://vidsrc.cc{tmdbId}?autoPlay=false`,
+      src: ["https://", "vidsrc.cc", "/v2/embed/movie/", tmdbId, "?autoPlay=false"].join(""),
     },
     {
       label: "Server 5 (SuperEmbed)",
-      src: `https://multiembed.mov{tmdbId}&tmdb=1`,
+      src: ["https://", "multiembed.mov", "/directstream.php?video_id=", tmdbId, "&tmdb=1"].join(""),
     },
     {
       label: "Server 6 (2Embed)",
-      src: `https://2embed.cc{tmdbId}`,
+      src: ["https://", "www.2embed.cc", "/embed/", tmdbId].join(""),
     },
     {
       label: "Server 7 (AutoEmbed)",
-      src: `https://autoembed.cc{tmdbId}`,
+      src: ["https://", "player.autoembed.cc", "/embed/movie/", tmdbId].join(""),
     },
     {
       label: "Server 8 (VidKing)",
-      src: `https://vidking.net{tmdbId}?autoplay=false`,
+      src: ["https://", "www.vidking.net", "/embed/movie/", tmdbId, "?autoplay=false"].join(""),
     },
     {
       label: "Server 9 (SmashStream)",
-      src: `https://smashystream.com{tmdbId}`,
+      src: ["https://", "embed.", "smashystream.com", "/playere.php?tmdb=", tmdbId].join(""),
     },
     {
       label: "Server 10 (MoviesAPI)",
-      src: `https://moviesapi.club{tmdbId}`,
+      src: ["https://", "moviesapi.club", "/movie/", tmdbId].join(""),
     },
   ], [tmdbId, startAt]);
 
-  const activeServer = servers[selectedServer] || servers[0];
+  const activeServer = servers[selectedServer] || servers;
 
   return (
     <main className="min-h-dvh bg-zinc-950 px-4 py-6 text-zinc-100 md:px-8 md:py-10">
