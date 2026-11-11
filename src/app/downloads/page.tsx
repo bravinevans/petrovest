@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { tmdb } from "@/api/tmdb-client";
@@ -18,6 +17,7 @@ interface SearchHit {
 }
 
 export default function DownloadsHubPage() {
+  const [noticeOpen, setNoticeOpen] = useState(true);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchHit[]>([]);
   const [searching, setSearching] = useState(false);
@@ -121,8 +121,38 @@ export default function DownloadsHubPage() {
 
   return (
     <main className="min-h-dvh bg-zinc-950 px-4 py-10 text-zinc-100 md:px-8">
+      {noticeOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="downloads-notice-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm"
+        >
+          <div className="w-full max-w-md border border-zinc-800 bg-zinc-950 p-6 text-zinc-100 shadow-2xl">
+            <p className="text-xs font-mono uppercase tracking-[0.2em] text-amber-400">
+              Downloads Notice
+            </p>
+            <h2 id="downloads-notice-title" className="mt-2 text-xl font-semibold tracking-tight">
+              Service Update
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-300">
+              We are aware that some download links are currently unavailable. Thank you for your patience as our team works to resolve the issue.
+            </p>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setNoticeOpen(false)}
+                className="border border-zinc-100 bg-zinc-100 px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300"
+              >
+                I Understand
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto w-full max-w-4xl">
-        <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-6">
+        <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-6">
           <div>
             <p className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400">
               Petrovest Cloud Download Center
@@ -142,10 +172,6 @@ export default function DownloadsHubPage() {
             &larr; Back to Streaming
           </Link>
         </header>
-
-        <div className="mb-6 border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-xs font-mono text-amber-200">
-          Some of the download links may not work properly, please bear with us as we work towards fixing it.
-        </div>
 
         <form onSubmit={handleSearch} className="mb-8 flex gap-2">
           <input
@@ -237,7 +263,6 @@ export default function DownloadsHubPage() {
                       {displayTitle}
                     </h3>
                   </div>
-
                   <button
                     type="button"
                     disabled={resolvingId === item.id}
@@ -251,9 +276,9 @@ export default function DownloadsHubPage() {
             })}
           </div>
         ) : (
-          <div className="border border-zinc-800/70 bg-zinc-900/20 px-6 py-12 text-center text-sm text-zinc-500">
+          <p className="text-sm text-zinc-400">
             Enter a movie or series name above to search for direct browser downloads.
-          </div>
+          </p>
         )}
       </div>
 
