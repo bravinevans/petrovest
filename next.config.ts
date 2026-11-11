@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["@heroui/react"],
     prefetchInlining: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/",
+        has: [{ type: "host", value: "downloads.petrovest.co.ke" }],
+        destination: "/downloads",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
