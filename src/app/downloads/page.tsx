@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import { tmdb } from "@/api/tmdb-client";
@@ -120,29 +121,26 @@ export default function DownloadsHubPage() {
   };
 
   return (
-    <main className="min-h-dvh bg-zinc-950 px-4 py-10 text-zinc-100 md:px-8">
+    <div className="mx-auto w-full max-w-4xl py-6">
       {noticeOpen && (
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="downloads-notice-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4"
         >
-          <div className="w-full max-w-md border border-zinc-800 bg-zinc-950 p-6 text-zinc-100 shadow-2xl">
-            <p className="text-xs font-mono uppercase tracking-[0.2em] text-amber-400">
+          <div className="w-full max-w-md rounded-xl border border-divider bg-content1 p-6 text-foreground shadow-xl">
+            <h2 id="downloads-notice-title" className="text-lg font-semibold">
               Downloads Notice
-            </p>
-            <h2 id="downloads-notice-title" className="mt-2 text-xl font-semibold tracking-tight">
-              Service Update
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-300">
+            <p className="mt-3 text-sm leading-relaxed text-default-500">
               We are aware that some download links are currently unavailable. Thank you for your patience as our team works to resolve the issue.
             </p>
             <div className="mt-6 flex justify-end">
               <button
                 type="button"
                 onClick={() => setNoticeOpen(false)}
-                className="border border-zinc-100 bg-zinc-100 px-5 py-2.5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300"
+                className="rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition-opacity hover:opacity-90"
               >
                 I Understand
               </button>
@@ -151,136 +149,124 @@ export default function DownloadsHubPage() {
         </div>
       )}
 
-      <div className="mx-auto w-full max-w-4xl">
-        <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-6">
-          <div>
-            <p className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400">
-              Petrovest Cloud Download Center
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-              Direct Movie &amp; Series Downloads
-            </h1>
-            <p className="mt-1 text-sm text-zinc-400">
-              Search any movie or series below to fetch exact file sizes and launch in-browser cloud downloads.
-            </p>
-          </div>
-
-          <Link
-            href="/"
-            className="border border-zinc-700 bg-zinc-900 px-4 py-2 text-xs font-mono uppercase tracking-wider text-zinc-200 transition-colors hover:bg-zinc-800"
-          >
-            &larr; Back to Streaming
-          </Link>
-        </header>
-
-        <form onSubmit={handleSearch} className="mb-8 flex gap-2">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search movie or TV series title (e.g., Dune, Breaking Bad)..."
-            className="min-h-12 flex-1 border border-zinc-800 bg-zinc-900 px-4 text-sm text-zinc-100 placeholder-zinc-500 focus:border-zinc-500 focus:outline-none"
-          />
-          <button
-            type="submit"
-            disabled={searching}
-            className="min-h-12 border border-zinc-100 bg-zinc-100 px-6 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300 disabled:opacity-50"
-          >
-            {searching ? "Searching..." : "Search"}
-          </button>
-        </form>
-
-        {tvPicker && (
-          <div className="mb-8 border border-zinc-700 bg-zinc-900/80 p-5">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-zinc-100">
-                Select Episode — {tvPicker.title}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setTvPicker(null)}
-                className="text-xs font-mono text-zinc-400 hover:text-white"
-              >
-                Close &times;
-              </button>
-            </div>
-            <div className="mt-4 flex flex-wrap items-end gap-4">
-              <div>
-                <label className="block text-xs font-mono uppercase text-zinc-400">Season</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={tvPicker.seasons}
-                  value={seasonInput}
-                  onChange={(e) => setSeasonInput(Math.max(1, Number(e.target.value)))}
-                  className="mt-1 h-10 w-24 border border-zinc-700 bg-zinc-950 px-3 text-sm text-zinc-100"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-mono uppercase text-zinc-400">Episode</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={100}
-                  value={episodeInput}
-                  onChange={(e) => setEpisodeInput(Math.max(1, Number(e.target.value)))}
-                  className="mt-1 h-10 w-24 border border-zinc-700 bg-zinc-950 px-3 text-sm text-zinc-100"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={openTvEpisodeDownload}
-                className="h-10 border border-zinc-100 bg-zinc-100 px-5 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 hover:bg-zinc-300"
-              >
-                Get Episode Files &darr;
-              </button>
-            </div>
-          </div>
-        )}
-
-        {searching ? (
-          <div className="flex justify-center py-12">
-            <Spinner size="lg" variant="simple" />
-          </div>
-        ) : results.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {results.map((item) => {
-              const displayTitle = item.title || item.name || "Untitled";
-              const year = (item.release_date || item.first_air_date || "").slice(0, 4);
-              return (
-                <div
-                  key={`${item.media_type}-${item.id}`}
-                  className="flex items-center justify-between gap-4 border border-zinc-800 bg-zinc-900/50 p-4"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="border border-zinc-700 bg-zinc-950 px-1.5 py-0.5 text-[10px] font-mono uppercase text-zinc-400">
-                        {item.media_type}
-                      </span>
-                      {year && <span className="text-xs font-mono text-zinc-500">{year}</span>}
-                    </div>
-                    <h3 className="mt-1.5 truncate text-sm font-semibold text-zinc-100">
-                      {displayTitle}
-                    </h3>
-                  </div>
-                  <button
-                    type="button"
-                    disabled={resolvingId === item.id}
-                    onClick={() => handleSelectTitle(item)}
-                    className="shrink-0 border border-zinc-100 bg-zinc-100 px-3.5 py-2 text-xs font-mono font-semibold uppercase tracking-wider text-zinc-950 transition-colors hover:bg-zinc-300 disabled:opacity-50"
-                  >
-                    {resolvingId === item.id ? "Loading..." : "Download ↓"}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-sm text-zinc-400">
-            Enter a movie or series name above to search for direct browser downloads.
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-divider pb-5">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Downloads</h1>
+          <p className="mt-1 text-sm text-default-500">
+            Search any movie or series to check available sizes and download options.
           </p>
-        )}
-      </div>
+        </div>
+
+        <Link
+          href="/"
+          className="rounded-lg border border-divider bg-content1 px-4 py-2 text-sm font-medium transition-colors hover:bg-content2"
+        >
+          Back to Home
+        </Link>
+      </header>
+
+      <form onSubmit={handleSearch} className="mb-6 flex gap-2">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search movie or TV series..."
+          className="h-11 flex-1 rounded-lg border border-divider bg-content1 px-4 text-sm text-foreground placeholder-default-400 focus:border-foreground focus:outline-none"
+        />
+        <button
+          type="submit"
+          disabled={searching}
+          className="h-11 rounded-lg bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
+          {searching ? "Searching..." : "Search"}
+        </button>
+      </form>
+
+      {tvPicker && (
+        <div className="mb-6 rounded-xl border border-divider bg-content1 p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold">Select Episode — {tvPicker.title}</h2>
+            <button
+              type="button"
+              onClick={() => setTvPicker(null)}
+              className="text-sm text-default-500 hover:text-foreground"
+            >
+              Close
+            </button>
+          </div>
+          <div className="mt-4 flex flex-wrap items-end gap-4">
+            <div>
+              <label className="block text-xs font-medium text-default-500">Season</label>
+              <input
+                type="number"
+                min={1}
+                max={tvPicker.seasons}
+                value={seasonInput}
+                onChange={(e) => setSeasonInput(Math.max(1, Number(e.target.value)))}
+                className="mt-1 h-10 w-24 rounded-lg border border-divider bg-content2 px-3 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-default-500">Episode</label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={episodeInput}
+                onChange={(e) => setEpisodeInput(Math.max(1, Number(e.target.value)))}
+                className="mt-1 h-10 w-24 rounded-lg border border-divider bg-content2 px-3 text-sm"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={openTvEpisodeDownload}
+              className="h-10 rounded-lg bg-foreground px-4 text-sm font-medium text-background hover:opacity-90"
+            >
+              Get Files
+            </button>
+          </div>
+        </div>
+      )}
+
+      {searching ? (
+        <div className="flex justify-center py-12">
+          <Spinner size="lg" variant="simple" />
+        </div>
+      ) : results.length > 0 ? (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {results.map((item) => {
+            const displayTitle = item.title || item.name || "Untitled";
+            const year = (item.release_date || item.first_air_date || "").slice(0, 4);
+            return (
+              <div
+                key={`${item.media_type}-${item.id}`}
+                className="flex items-center justify-between gap-4 rounded-xl border border-divider bg-content1 p-4"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 text-xs text-default-500">
+                    <span className="capitalize">{item.media_type}</span>
+                    {year && <span>• {year}</span>}
+                  </div>
+                  <h3 className="mt-1 truncate text-sm font-semibold">{displayTitle}</h3>
+                </div>
+
+                <button
+                  type="button"
+                  disabled={resolvingId === item.id}
+                  onClick={() => handleSelectTitle(item)}
+                  className="shrink-0 rounded-lg bg-foreground px-3.5 py-2 text-xs font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-50"
+                >
+                  {resolvingId === item.id ? "Loading..." : "Download"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-divider bg-content1/50 px-6 py-12 text-center text-sm text-default-500">
+          Search for a movie or TV series above to view download options.
+        </div>
+      )}
 
       {selectedItem && (
         <DownloadDrawer
