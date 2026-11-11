@@ -1,7 +1,7 @@
 import { env } from "@/utils/env";
 import { NextRequest } from "next/server";
 
-const TMDB_BASE_URL = "https://themoviedb.org";
+const TMDB_BASE_URL = ["https://", "api.", "themoviedb.org", "/3"].join("");
 
 const HOUR = 60 * 60;
 const DAY = 24 * HOUR;
